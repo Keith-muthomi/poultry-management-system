@@ -5,6 +5,13 @@ import './components/pages/AuthPage.js';
 import './components/pages/NotFoundPage.js';
 import './components/pages/ProductionPage.js';
 import './components/pages/FlockPage.js';
+
+// UI Components
+import './components/ui/StatCard.js';
+import './components/ui/Table.js';
+import './components/ui/Button.js';
+import './components/ui/Modal.js';
+
 import 'material-symbols';
 
 class ClientRouter {

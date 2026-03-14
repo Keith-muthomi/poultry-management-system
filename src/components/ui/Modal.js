@@ -1,4 +1,3 @@
-// src/components/ui/UIModal.js
 import { LitElement, html } from 'lit';
 
 export class UIModal extends LitElement {
@@ -7,7 +6,7 @@ export class UIModal extends LitElement {
   static properties = {
     open:    { type: Boolean },
     title:   { type: String },
-    size:    { type: String },  // sm, md, lg, xl
+    size:    { type: String },
     loading: { type: Boolean },
   };
 
@@ -44,34 +43,35 @@ export class UIModal extends LitElement {
       md: 'max-w-md',
       lg: 'max-w-lg',
       xl: 'max-w-2xl',
+      '2xl': 'max-w-4xl'
     };
 
     return html`
-      <!-- Backdrop -->
+      <!-- M3 Corporate Backdrop -->
       <div
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 transition-all duration-300"
         @click=${(e) => { if (e.target === e.currentTarget) this._close(); }}>
 
-        <!-- Dialog -->
-        <div class="relative w-full ${sizes[this.size] ?? sizes['md']} bg-white rounded-2xl shadow-xl flex flex-col max-h-[90vh]">
+        <!-- M3 Corporate Dialog -->
+        <div class="relative w-full ${sizes[this.size] ?? sizes['md']} bg-md-surface dark:bg-md-dark-surface rounded-md-md shadow-elevation-3 flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200 border border-md-outline/20 dark:border-md-dark-outline/20">
 
           <!-- Header -->
-          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
-            <h2 class="text-base font-semibold text-gray-900">${this.title}</h2>
+          <div class="flex items-center justify-between px-5 py-3.5 border-b border-md-outline/10 dark:border-md-dark-outline/10 bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 rounded-t-md-md shrink-0">
+            <h2 class="text-[15px] font-bold text-md-on-surface dark:text-md-dark-on-surface leading-tight tracking-tight uppercase tracking-wider">${this.title}</h2>
             <button
               @click=${this._close}
-              class="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
-              <span class="material-symbols-rounded" style="font-size:20px">close</span>
+              class="w-8 h-8 flex items-center justify-center rounded-md-full text-md-on-surface-variant dark:text-md-dark-on-surface-variant hover:bg-md-primary/10 dark:hover:bg-md-dark-primary/10 transition-colors">
+              <span class="material-symbols-rounded text-[20px] leading-none">close</span>
             </button>
           </div>
 
           <!-- Body -->
-          <div class="flex-1 overflow-y-auto px-6 py-5">
+          <div class="flex-1 overflow-y-auto px-5 py-5 text-md-on-surface dark:text-md-dark-on-surface text-[13px] leading-relaxed">
             <slot name="body"></slot>
           </div>
 
           <!-- Footer -->
-          <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 shrink-0">
+          <div class="flex items-center justify-end gap-2 px-5 py-3.5 border-t border-md-outline/10 dark:border-md-dark-outline/10 bg-md-surface-variant/10 dark:bg-md-dark-surface-variant/10 rounded-b-md-md shrink-0">
             <slot name="footer"></slot>
           </div>
 

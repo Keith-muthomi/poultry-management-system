@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-md-background text-md-on-surface font-sans antialiased transition-colors duration-300;
+  }
+
+  .dark body {
+    @apply bg-md-dark-background text-md-dark-on-surface;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight text-md-on-surface transition-colors duration-300;
+  }
+
+  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+    @apply text-md-dark-on-surface;
+  }
+}
+
+@layer components {
+  .m3-card {
+    @apply bg-md-surface rounded-md-md border border-md-outline/20 shadow-elevation-1 transition-all duration-300;
+  }
+
+  .dark .m3-card {
+    @apply bg-md-dark-surface border-md-dark-outline/20;
+  }
+}

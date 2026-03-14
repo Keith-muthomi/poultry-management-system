@@ -1,98 +1,75 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-
-        primary: {
-          50: "#f0f7ff",
-          100: "#dfeeff",
-          200: "#b8dfff",
-          300: "#79c4ff",
-          400: "#32a7fe",
-          500: "#078cf0",
-          600: "#006ecd",
-          700: "#0057a6",
-          800: "#034a89",
-          900: "#094074",
-          950: "#06274b",
+        // Corporate Material 3 Design Tokens (Slate/Navy Baseline)
+        md: {
+          // Primary: Professional Navy
+          primary: "#1e40af", // blue-800
+          "on-primary": "#FFFFFF",
+          "primary-container": "#dbeafe", // blue-100
+          "on-primary-container": "#1e3a8a", // blue-900
+          
+          // Secondary: Sophisticated Slate
+          secondary: "#475569", // slate-600
+          "on-secondary": "#FFFFFF",
+          "secondary-container": "#f1f5f9", // slate-100
+          "on-secondary-container": "#0f172a", // slate-900
+          
+          // Tertiary: Teal/Indigo accent
+          tertiary: "#0d9488", // teal-600
+          "on-tertiary": "#FFFFFF",
+          "tertiary-container": "#ccfbf1", // teal-100
+          "on-tertiary-container": "#115e59", // teal-800
+          
+          error: "#b91c1c",
+          "on-error": "#FFFFFF",
+          "error-container": "#fee2e2",
+          "on-error-container": "#7f1d1d",
+          
+          // Surfaces (Light)
+          surface: "#ffffff",
+          "on-surface": "#0f172a",
+          "surface-variant": "#f1f5f9",
+          "on-surface-variant": "#475569",
+          outline: "#94a3b8",
+          background: "#f8fafc",
+          
+          // Dark Mode Overrides (Custom naming for internal use in components if needed, 
+          // but standard Tailwind 'dark:' prefix is preferred)
+          dark: {
+            surface: "#0f172a",
+            "on-surface": "#f8fafc",
+            "surface-variant": "#1e293b",
+            "on-surface-variant": "#94a3b8",
+            outline: "#475569",
+            background: "#020617",
+            primary: "#60a5fa",
+            "primary-container": "#1e3a8a",
+            "on-primary-container": "#dbeafe",
+          }
         },
-
-        secondary: {
-          50: "#f4f7fb",
-          100: "#e8eef6",
-          200: "#cddbea",
-          300: "#a1bdd8",
-          400: "#6e9ac2",
-          500: "#4b7eac",
-          600: "#3c6997",
-          700: "#2f5075",
-          800: "#2a4562",
-          900: "#273c53",
-          950: "#1a2637",
-        },
-
-        neutral: {
-          50: "#f9fafb",
-          100: "#f4f4f5",
-          200: "#e6e7ea",
-          300: "#d3d6d9",
-          400: "#9fa6ac",
-          500: "#6f757c",
-          600: "#4f585f",
-          700: "#373f47",
-          800: "#232c33",
-          900: "#151b23",
-          950: "#06090f",
-        },
-
-        error: {
-          50: "#fdf3f3",
-          100: "#fce7e9",
-          200: "#f8d3d8",
-          300: "#f2afb7",
-          400: "#ea8291",
-          500: "#de556d",
-          600: "#b9314f",
-          700: "#a92747",
-          800: "#8e2341",
-          900: "#7a213d",
-          950: "#430e1d",
-        },
-
-        success: {
-          50: "#effef3",
-          100: "#dbfde4",
-          200: "#b8faca",
-          300: "#91f5ad",
-          400: "#44e471",
-          500: "#1bcc4e",
-          600: "#10a93b",
-          700: "#108532",
-          800: "#13682c",
-          900: "#115626",
-          950: "#033012",
-        },
-
-        accent: {
-          50: "#fef5ee",
-          100: "#fce8d8",
-          200: "#f8ccb0",
-          300: "#f4a97d",
-          400: "#ef8354",
-          500: "#ea5925",
-          600: "#db411b",
-          700: "#b62f18",
-          800: "#91281b",
-          900: "#752319",
-          950: "#3f0e0b",
-        }
-
+      },
+      borderRadius: {
+        'md-xs': '4px',
+        'md-sm': '8px',
+        'md-md': '12px',
+        'md-lg': '16px',
+        'md-xl': '28px',
+        'md-full': '9999px',
+      },
+      boxShadow: {
+        'elevation-1': '0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30)',
+        'elevation-2': '0px 2px 6px 2px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30)',
+        'elevation-3': '0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.30)',
+      },
+      fontFamily: {
+        sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
       }
-    }
+    },
   },
-
   plugins: [],
 }

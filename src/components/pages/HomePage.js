@@ -1,75 +1,106 @@
 import { LitElement, html } from 'lit';
 import { BasePage } from '../base/BasePage.js';
+import { FlockService } from '../../services/FlockService.js';
+import { ProductionService } from '../../services/ProductionService.js';
 
 export class HomePage extends BasePage {
 
-  // Helper for Stat Cards
-  renderStatCard(label, value, trend, icon, colorClass) {
-    return html`
-      <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-        <div class="flex items-center justify-between mb-4">
-          <span class="p-2 rounded-lg ${colorClass} bg-opacity-10">
-            <span class="material-symbols-rounded text-xl ${colorClass.replace('bg-', 'text-')}">${icon}</span>
-          </span>
-          <span class="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">${trend}</span>
-        </div>
-        <h3 class="text-gray-500 text-sm font-medium">${label}</h3>
-        <p class="text-2xl font-bold text-gray-900 mt-1">${value}</p>
-      </div>
-    `;
+  static properties = {
+    ...BasePage.properties,
+    stats: { type: Object }
+  };
+
+  constructor() {
+    super();
+    this.stats = {
+      totalBirds: 0,
+      todayEggs: 0,
+      todayMortality: 0,
+      todayFeed: 0
+    };
+  }
+
+  async connectedCallback() {
+    super.connectedCallback();
+    await this.fetchOverview();
+  }
+
+  async fetchOverview() {
+    this.loading = true;
+    try {
+      const [flocks, prodStats] = await Promise.all([
+        FlockService.getFlocks(),
+        ProductionService.getTodayStats()
+      ]);
+
+      this.stats = {
+        totalBirds: flocks.reduce((sum, f) => sum + f.current_count, 0),
+        todayEggs: prodStats?.total_eggs || 0,
+        todayMortality: prodStats?.total_mortality || 0,
+        todayFeed: prodStats?.total_feed || 0
+      };
+    } catch (err) {
+      console.error('Home Page fetch error:', err);
+      this.error = "Could not load dashboard data.";
+    } finally {
+      this.loading = false;
+    }
   }
 
   render() {
+    if (this.loading || this.error) return super.render();
+
     return html`
-      <div class="space-y-8">
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900">Farm Overview</h1>
-          <p class="text-gray-500 text-sm">Real-time health and production metrics for today.</p>
+      <div class="space-y-6 animate-in fade-in duration-500">
+        <div class="flex flex-col gap-0.5">
+          <h1 class="text-2xl font-bold text-md-on-surface dark:text-md-dark-on-surface tracking-tight">Enterprise Overview</h1>
+          <p class="text-md-on-surface-variant dark:text-md-dark-on-surface-variant text-[12px] font-medium uppercase tracking-wider">Dashboard / Management Suite</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          ${this.renderStatCard('Total Birds', '12,450', '+2.4%', 'eco', 'bg-blue-500')}
-          ${this.renderStatCard('Egg Production', '8,902', '+0.8%', 'egg', 'bg-amber-500')}
-          ${this.renderStatCard('Feed Stock', '450kg', '-12%', 'inventory_2', 'bg-emerald-500')}
-          ${this.renderStatCard('Mortality Rate', '0.02%', '-0.1%', 'monitoring', 'bg-rose-500')}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <stat-card label="Aggregate Population" value="${this.stats.totalBirds.toLocaleString()}" icon="groups" colorClass="bg-blue-500"></stat-card>
+          <stat-card label="Yield Today" value="${this.stats.todayEggs.toLocaleString()}" icon="egg" colorClass="bg-amber-500"></stat-card>
+          <stat-card label="Input (Feed)" value="${this.stats.todayFeed}kg" icon="inventory_2" colorClass="bg-emerald-500"></stat-card>
+          <stat-card label="Incidents" value="${this.stats.todayMortality}" icon="monitoring" colorClass="bg-rose-500"></stat-card>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-100 shadow-sm min-h-[300px]">
-            <div class="flex items-center justify-between mb-6">
-              <h2 class="font-semibold text-gray-800">Production Trends</h2>
-              <select class="text-sm border-gray-200 rounded-lg focus:ring-primary-500">
-                <option>Last 7 Days</option>
-                <option>Last 30 Days</option>
-              </select>
+          <div class="lg:col-span-2 bg-md-surface dark:bg-md-dark-surface p-5 rounded-md-md border border-md-outline/10 dark:border-md-dark-outline/10 shadow-elevation-1 min-h-[300px]">
+            <div class="flex items-center justify-between mb-5 pb-3 border-b border-md-outline/5 dark:border-md-dark-outline/5">
+              <h2 class="text-[14px] font-bold text-md-on-surface dark:text-md-dark-on-surface uppercase tracking-wider">Production Analytics</h2>
+              <ui-button variant="text" size="sm" label="Report" icon="analytics"></ui-button>
             </div>
-            <div class="flex items-center justify-center h-48 border-2 border-dashed border-gray-100 rounded-lg bg-gray-50">
-              <p class="text-gray-400 text-sm">Growth/Production Chart Area</p>
+            <div class="flex items-center justify-center h-48 border border-md-outline/10 dark:border-md-dark-outline/10 rounded-md-sm bg-md-surface-variant/20 dark:bg-md-dark-surface-variant/20">
+              <p class="text-md-on-surface-variant dark:text-md-dark-on-surface-variant text-[12px] font-medium italic">Data visualization is initializing for current cycle.</p>
             </div>
           </div>
 
-          <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-            <h2 class="font-semibold text-gray-800 mb-4">Today's Schedule</h2>
-            <div class="space-y-4">
-              <div class="flex gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                <span class="material-symbols-rounded text-blue-600">vaccines</span>
-                <div>
-                  <p class="text-sm font-medium text-blue-900">Vaccination: Batch A</p>
-                  <p class="text-xs text-blue-700">Due by 2:00 PM</p>
+          <div class="bg-md-surface dark:bg-md-dark-surface p-5 rounded-md-md border border-md-outline/10 dark:border-md-dark-outline/10 shadow-elevation-1">
+            <h2 class="text-[14px] font-bold text-md-on-surface dark:text-md-dark-on-surface uppercase tracking-wider mb-5 pb-3 border-b border-md-outline/5 dark:border-md-dark-outline/5">Active Protocol</h2>
+            <div class="space-y-2">
+              <div class="flex items-center gap-3 p-3 bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 rounded-md-sm border border-md-outline/5 dark:border-md-dark-outline/5 hover:border-md-primary/30 transition-all group cursor-pointer">
+                <div class="w-9 h-9 rounded-md-sm bg-md-primary/10 dark:bg-md-dark-primary/10 text-md-primary dark:text-md-dark-primary flex items-center justify-center shrink-0">
+                  <span class="material-symbols-rounded text-[20px]">vaccines</span>
                 </div>
+                <div class="flex-grow min-w-0">
+                  <p class="text-[13px] font-bold text-md-on-surface dark:text-md-dark-on-surface leading-none truncate">Vaccination Batch A</p>
+                  <p class="text-[11px] text-md-on-surface-variant dark:text-md-dark-on-surface-variant mt-1">14:00 HRS • Pending</p>
+                </div>
+                <span class="material-symbols-rounded text-md-on-surface-variant dark:text-md-dark-on-surface-variant text-[16px] opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
               </div>
-              <div class="flex gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                <span class="material-symbols-rounded text-gray-500">cleaning_services</span>
-                <div>
-                  <p class="text-sm font-medium text-gray-900">Pen 04 Cleaning</p>
-                  <p class="text-xs text-gray-500">Routine Maintenance</p>
+              
+              <div class="flex items-center gap-3 p-3 bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 rounded-md-sm border border-md-outline/5 dark:border-md-dark-outline/10 hover:border-md-primary/30 transition-all group cursor-pointer">
+                <div class="w-9 h-9 rounded-md-sm bg-md-tertiary/10 dark:bg-md-dark-tertiary/10 text-md-tertiary dark:text-md-dark-tertiary flex items-center justify-center shrink-0">
+                  <span class="material-symbols-rounded text-[20px]">cleaning_services</span>
                 </div>
+                <div class="flex-grow min-w-0">
+                  <p class="text-[13px] font-bold text-md-on-surface dark:text-md-dark-on-surface leading-none truncate">Facility Sanitization</p>
+                  <p class="text-[11px] text-md-on-surface-variant dark:text-md-dark-on-surface-variant mt-1">Pen 04 • Routine</p>
+                </div>
+                <span class="material-symbols-rounded text-md-on-surface-variant dark:text-md-dark-on-surface-variant text-[16px] opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
               </div>
             </div>
-            <button class="w-full mt-6 py-2 text-sm font-medium text-primary-600 hover:bg-primary-50 rounded-lg transition-colors">
-              View All Tasks
-            </button>
           </div>
 
         </div>

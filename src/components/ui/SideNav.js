@@ -6,7 +6,7 @@ export class SideNav extends LitElement {
   static properties = {
     currentPath: { type: String },
     collapsed: { type: Boolean },
-    mobileOpen: { type: Boolean }, // New property for mobile state
+    mobileOpen: { type: Boolean },
   };
 
   constructor() {
@@ -17,16 +17,19 @@ export class SideNav extends LitElement {
   }
 
   isActive(path) {
-    return this.currentPath === path;
+    if (path === '/') return this.currentPath === '/';
+    return this.currentPath.startsWith(path);
   }
 
   navItem(path, label, icon) {
     const active = this.isActive(path);
     return html`
       <a href=${path} data-link
-        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 
-        ${active ? 'bg-primary-50 text-primary-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}">
-        <span class="material-symbols-rounded w-5 h-5 flex items-center justify-center">${icon}</span>
+        class="flex items-center gap-3 px-4 py-3 rounded-md-full text-[14px] transition-all duration-200 group mx-3 mb-1
+        ${active 
+          ? 'bg-md-primary-container dark:bg-md-dark-primary-container text-md-on-primary-container dark:text-md-on-primary-container font-semibold' 
+          : 'text-md-on-surface-variant dark:text-md-dark-on-surface-variant hover:bg-md-surface-variant dark:hover:bg-md-dark-surface-variant'}">
+        <span class="material-symbols-rounded text-[24px] leading-none ${active ? 'text-md-primary dark:text-md-dark-primary' : 'text-md-on-surface-variant dark:text-md-dark-on-surface-variant'}">${icon}</span>
         <span class="${this.collapsed ? 'md:hidden' : 'block'}">${label}</span>
       </a>
     `;
@@ -34,46 +37,54 @@ export class SideNav extends LitElement {
 
   render() {
     return html`
+      <!-- Backdrop -->
       <div 
         @click=${() => this.dispatchEvent(new CustomEvent('toggle-menu'))}
-        class="fixed inset-0 bg-gray-900/50 z-40 md:hidden transition-opacity ${this.mobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}">
+        class="fixed inset-0 bg-black/40 z-40 md:hidden transition-opacity duration-300 ${this.mobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}">
       </div>
 
-      <aside class="fixed inset-y-0 left-0 z-50 flex flex-col h-screen bg-white border-r border-gray-200 px-3 py-4 transition-all duration-300 transform 
+      <aside class="fixed inset-y-0 left-0 z-50 flex flex-col h-screen bg-md-surface dark:bg-md-dark-surface border-r border-md-outline/10 dark:border-md-dark-outline/10 transition-all duration-300 transform 
         ${this.mobileOpen ? 'translate-x-0' : '-translate-x-full'} 
         md:translate-x-0 md:relative 
-        ${this.collapsed ? 'md:w-16' : 'md:w-64'} w-64">
+        ${this.collapsed ? 'md:w-20' : 'md:w-72'} w-72">
 
-        <div class="flex items-center gap-2 px-3 mb-6">
-          <div class="w-7 h-7 rounded-md bg-primary-600 flex items-center justify-center shrink-0">
-            <span class="text-white text-xs font-bold">P</span>
+        <!-- Logo -->
+        <div class="flex items-center gap-4 px-6 h-16 border-b border-md-outline/5 dark:border-md-dark-outline/5 mb-4">
+          <div class="w-10 h-10 rounded-md-md bg-md-primary dark:bg-md-dark-primary flex items-center justify-center shadow-elevation-1">
+            <span class="material-symbols-rounded text-md-on-primary text-[24px]">eco</span>
           </div>
-          <span class="font-semibold text-gray-900 text-sm ${this.collapsed ? 'md:hidden' : 'block'}">PoultryDocs</span>
+          <div class="${this.collapsed ? 'md:hidden' : 'flex flex-col'}">
+            <span class="font-bold text-md-on-surface dark:text-md-dark-on-surface text-[18px] tracking-tight">PoultryDocs</span>
+          </div>
         </div>
 
-        <nav class="flex flex-col gap-1 flex-grow">
-          ${this.navItem('/', 'Dashboard', 'home')}
-          ${this.navItem('/production', 'Production', 'factory')}
-          ${this.navItem('/flock', 'Flock', 'warehouse')}
-          ${this.navItem('/feed', 'Feed', 'package')}
-          ${this.navItem('/inventory', 'Inventory', 'archive')}
-          ${this.navItem('/health', 'Health', 'health_metrics')}
-          ${this.navItem('/finance', 'Finance', 'wallet')}
-          ${this.navItem('/reports', 'Reports', 'analytics')}
+        <!-- Navigation Items -->
+        <nav class="flex flex-col flex-grow overflow-y-auto scrollbar-hide">
+          <div class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-widest px-8 mb-3 mt-2 ${this.collapsed ? 'md:hidden' : ''}">Core Assets</div>
+          ${this.navItem('/', 'Dashboard', 'dashboard')}
+          ${this.navItem('/production', 'Production', 'egg')}
+          ${this.navItem('/flock', 'Flocks', 'inventory')}
+          
+          <div class="my-4 border-t border-md-outline/5 dark:border-md-dark-outline/5 mx-6"></div>
+          
+          <div class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-widest px-8 mb-3 ${this.collapsed ? 'md:hidden' : ''}">Resources</div>
+          ${this.navItem('/inventory', 'Supplies', 'category')}
+          ${this.navItem('/finance', 'Finance', 'payments')}
           ${this.navItem('/settings', 'Settings', 'settings')}
         </nav>
 
-        <button
-          @click=${() => { this.collapsed = !this.collapsed; }}
-          class="hidden md:flex mt-auto items-center gap-2 px-3 py-2 text-xs text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          <span>${this.collapsed ? '→' : '←'}</span>
-          ${!this.collapsed ? html`<span>Collapse</span>` : ''}
-        </button>
+        <!-- Footer / Collapse -->
+        <div class="mt-auto p-3 border-t border-md-outline/5 dark:border-md-dark-outline/5">
+           <button
+            @click=${() => { this.collapsed = !this.collapsed; }}
+            class="flex items-center gap-4 px-5 py-3 w-full rounded-md-full text-md-on-surface-variant dark:text-md-dark-on-surface-variant hover:bg-md-surface-variant dark:hover:bg-md-dark-surface-variant transition-colors"
+          >
+            <span class="material-symbols-rounded text-[24px] leading-none">${this.collapsed ? 'menu_open' : 'menu'}</span>
+            ${!this.collapsed ? html`<span class="text-[14px] font-semibold">Collapse Drawer</span>` : ''}
+          </button>
+        </div>
       </aside>
     `;
   }
 }
 customElements.define('side-nav', SideNav);
-
-
