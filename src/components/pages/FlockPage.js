@@ -129,8 +129,6 @@ export class FlockPage extends BasePage {
   }
 
   renderFlockModal() {
-    if (!this.isModalOpen) return html``;
-
     return html`
       <ui-modal 
           .open=${this.isModalOpen} 
@@ -225,10 +223,10 @@ export class FlockPage extends BasePage {
 
         <!-- Overview -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <stat-card label="Total Assets" value="${this.flocks.reduce((sum, f) => sum + f.current_count, 0).toLocaleString()}" icon="groups" colorClass="bg-blue-500"></stat-card>
-          <stat-card label="Operational" value="${this.flocks.filter(f => f.status === 'Active').length}" icon="fact_check" colorClass="bg-emerald-500"></stat-card>
-          <stat-card label="Layers" value="${this.flocks.filter(f => f.type === 'Layers').reduce((sum, f) => sum + f.current_count, 0).toLocaleString()}" icon="egg" colorClass="bg-amber-500"></stat-card>
-          <stat-card label="Broilers" value="${this.flocks.filter(f => f.type === 'Broilers').reduce((sum, f) => sum + f.current_count, 0).toLocaleString()}" icon="restaurant" colorClass="bg-rose-500"></stat-card>
+          <stat-card label="Total Assets" value="${this.flocks.reduce((sum, f) => sum + f.current_count, 0).toLocaleString()}" icon="groups" colorClass="border-md-primary dark:border-md-dark-primary"></stat-card>
+          <stat-card label="Operational" value="${this.flocks.filter(f => f.status === 'Active').length}" icon="fact_check" colorClass="border-md-tertiary"></stat-card>
+          <stat-card label="Layers" value="${this.flocks.filter(f => f.type === 'Layers').reduce((sum, f) => sum + f.current_count, 0).toLocaleString()}" icon="egg" colorClass="border-md-secondary"></stat-card>
+          <stat-card label="Broilers" value="${this.flocks.filter(f => f.type === 'Broilers').reduce((sum, f) => sum + f.current_count, 0).toLocaleString()}" icon="restaurant" colorClass="border-md-error"></stat-card>
         </div>
 
         <!-- Data Section -->

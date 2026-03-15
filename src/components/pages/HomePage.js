@@ -58,15 +58,15 @@ export class HomePage extends BasePage {
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <stat-card label="Aggregate Population" value="${this.stats.totalBirds.toLocaleString()}" icon="groups" colorClass="bg-blue-500"></stat-card>
-          <stat-card label="Yield Today" value="${this.stats.todayEggs.toLocaleString()}" icon="egg" colorClass="bg-amber-500"></stat-card>
-          <stat-card label="Input (Feed)" value="${this.stats.todayFeed}kg" icon="inventory_2" colorClass="bg-emerald-500"></stat-card>
-          <stat-card label="Incidents" value="${this.stats.todayMortality}" icon="monitoring" colorClass="bg-rose-500"></stat-card>
+          <stat-card label="Aggregate Population" value="${this.stats.totalBirds.toLocaleString()}" icon="groups" colorClass="border-md-primary dark:border-md-dark-primary"></stat-card>
+          <stat-card label="Yield Today" value="${this.stats.todayEggs.toLocaleString()}" icon="egg" colorClass="border-md-secondary"></stat-card>
+          <stat-card label="Input (Feed)" value="${this.stats.todayFeed}kg" icon="inventory_2" colorClass="border-md-tertiary"></stat-card>
+          <stat-card label="Incidents" value="${this.stats.todayMortality}" icon="monitoring" colorClass="border-md-error"></stat-card>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          <div class="lg:col-span-2 bg-md-surface dark:bg-md-dark-surface p-5 rounded-md-md border border-md-outline/10 dark:border-md-dark-outline/10 shadow-elevation-1 min-h-[300px]">
+          <div class="lg:col-span-2 bg-md-surface dark:bg-md-dark-surface p-5 rounded-md-md border border-md-outline/10 dark:border-md-dark-outline/10 min-h-[300px]">
             <div class="flex items-center justify-between mb-5 pb-3 border-b border-md-outline/5 dark:border-md-dark-outline/5">
               <h2 class="text-[14px] font-bold text-md-on-surface dark:text-md-dark-on-surface uppercase tracking-wider">Production Analytics</h2>
               <ui-button variant="text" size="sm" label="Report" icon="analytics"></ui-button>
@@ -76,7 +76,7 @@ export class HomePage extends BasePage {
             </div>
           </div>
 
-          <div class="bg-md-surface dark:bg-md-dark-surface p-5 rounded-md-md border border-md-outline/10 dark:border-md-dark-outline/10 shadow-elevation-1">
+          <div class="bg-md-surface dark:bg-md-dark-surface p-5 rounded-md-md border border-md-outline/10 dark:border-md-dark-outline/10">
             <h2 class="text-[14px] font-bold text-md-on-surface dark:text-md-dark-on-surface uppercase tracking-wider mb-5 pb-3 border-b border-md-outline/5 dark:border-md-dark-outline/5">Active Protocol</h2>
             <div class="space-y-2">
               <div class="flex items-center gap-3 p-3 bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 rounded-md-sm border border-md-outline/5 dark:border-md-dark-outline/5 hover:border-md-primary/30 transition-all group cursor-pointer">

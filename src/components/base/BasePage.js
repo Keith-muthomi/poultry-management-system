@@ -18,7 +18,7 @@ export class BasePage extends LitElement {
 
   renderLoading() {
     return html`
-      <div class="flex flex-col items-center justify-center p-12 gap-4">
+      <div class="flex flex-col items-center justify-center p-12 gap-4 w-full h-full">
         <div class="w-8 h-8 border-4 border-md-primary/30 border-t-md-primary rounded-md-full animate-spin"></div>
         <span class="text-md-on-surface-variant text-[14px] font-medium tracking-wide">Loading...</span>
       </div>

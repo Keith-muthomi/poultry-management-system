@@ -47,7 +47,7 @@ export class UITable extends LitElement {
 
   render() {
     return html`
-      <div class="w-full bg-md-surface dark:bg-md-dark-surface rounded-md-md border border-md-outline/10 dark:border-md-dark-outline/10 overflow-hidden shadow-elevation-1 transition-all duration-300">
+      <div class="w-full bg-md-surface dark:bg-md-dark-surface rounded-md-md border border-md-outline/10 dark:border-md-dark-outline/10 overflow-hidden transition-all duration-300">
         <div class="overflow-x-auto">
           <table class="w-full text-[13px] text-left border-collapse">
             <thead>

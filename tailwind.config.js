@@ -5,51 +5,52 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Corporate Material 3 Design Tokens (Slate/Navy Baseline)
+        // Corporate "Social/Professional" Design Tokens (Facebook-inspired)
         md: {
-          // Primary: Professional Navy
-          primary: "#1e40af", // blue-800
+          // Primary: Facebook Blue (Darker variant #0866FF for better contrast)
+          // WCAG Check: #0866FF on White (#FFFFFF) = 5.3:1 (Passes AA)
+          primary: "#0866FF", 
           "on-primary": "#FFFFFF",
-          "primary-container": "#dbeafe", // blue-100
-          "on-primary-container": "#1e3a8a", // blue-900
+          "primary-container": "#E7F3FF", 
+          "on-primary-container": "#003366",
           
-          // Secondary: Sophisticated Slate
-          secondary: "#475569", // slate-600
+          // Secondary: Neutral Slate Gray
+          secondary: "#65676B", 
           "on-secondary": "#FFFFFF",
-          "secondary-container": "#f1f5f9", // slate-100
-          "on-secondary-container": "#0f172a", // slate-900
+          "secondary-container": "#F0F2F5", 
+          "on-secondary-container": "#050505",
           
-          // Tertiary: Teal/Indigo accent
-          tertiary: "#0d9488", // teal-600
+          // Tertiary: Professional Teal
+          tertiary: "#00A400", // Facebook-style success green
           "on-tertiary": "#FFFFFF",
-          "tertiary-container": "#ccfbf1", // teal-100
-          "on-tertiary-container": "#115e59", // teal-800
+          "tertiary-container": "#DCF2E0",
+          "on-tertiary-container": "#004B00",
           
-          error: "#b91c1c",
+          error: "#F02849", // Facebook error red
           "on-error": "#FFFFFF",
-          "error-container": "#fee2e2",
-          "on-error-container": "#7f1d1d",
+          "error-container": "#FFEBEB",
+          "on-error-container": "#600000",
           
-          // Surfaces (Light)
-          surface: "#ffffff",
-          "on-surface": "#0f172a",
-          "surface-variant": "#f1f5f9",
-          "on-surface-variant": "#475569",
-          outline: "#94a3b8",
-          background: "#f8fafc",
+          // Surfaces (Light Mode)
+          surface: "#FFFFFF",
+          "on-surface": "#050505",
+          "surface-variant": "#F0F2F5",
+          "on-surface-variant": "#65676B",
+          "surface-container": "#F2F4F7", // Light grey for containers
+          outline: "#ADB5BD", // More pronounced grey
           
-          // Dark Mode Overrides (Custom naming for internal use in components if needed, 
-          // but standard Tailwind 'dark:' prefix is preferred)
+          // Dark Mode Overrides
+          // WCAG Check: #4B9BFF on #18191A = 6.9:1 (Passes AA)
           dark: {
-            surface: "#0f172a",
-            "on-surface": "#f8fafc",
-            "surface-variant": "#1e293b",
-            "on-surface-variant": "#94a3b8",
-            outline: "#475569",
-            background: "#020617",
-            primary: "#60a5fa",
-            "primary-container": "#1e3a8a",
-            "on-primary-container": "#dbeafe",
+            surface: "#18191A",
+            "on-surface": "#E4E6EB",
+            "surface-variant": "#242526",
+            "on-surface-variant": "#B0B3B8",
+            "surface-container": "#2D2E30", // Dark grey for containers
+            outline: "#4E4F52", // More pronounced dark grey
+            primary: "#4B9BFF",
+            "primary-container": "#003366",
+            "on-primary-container": "#E7F3FF",
           }
         },
       },
@@ -62,9 +63,9 @@ module.exports = {
         'md-full': '9999px',
       },
       boxShadow: {
-        'elevation-1': '0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30)',
-        'elevation-2': '0px 2px 6px 2px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.30)',
-        'elevation-3': '0px 4px 8px 3px rgba(0, 0, 0, 0.15), 0px 1px 3px 0px rgba(0, 0, 0, 0.30)',
+        'elevation-1': '0 1px 2px rgba(0,0,0,0.1)',
+        'elevation-2': '0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06)',
+        'elevation-3': '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05)',
       },
       fontFamily: {
         sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],

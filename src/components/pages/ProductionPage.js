@@ -108,18 +108,18 @@ export class ProductionPage extends BasePage {
 
     if (this.mode === 'layers') {
         return html`
-            <stat-card label="Aggregate Yield" value="${totalEggs.toLocaleString()}" icon="egg" colorClass="bg-amber-500"></stat-card>
-            <stat-card label="Total Deficit" value="${filteredLogs.reduce((sum, l) => sum + (l.cracked_count || 0), 0)}" icon="warning" colorClass="bg-rose-500"></stat-card>
-            <stat-card label="Input Analysis" value="${totalFeed}kg" icon="inventory_2" colorClass="bg-emerald-500"></stat-card>
-            <stat-card label="Cycle Average" value="${filteredLogs.length ? Math.round(totalEggs / filteredLogs.length) : 0}" icon="monitoring" colorClass="bg-blue-500"></stat-card>
+            <stat-card label="Aggregate Yield" value="${totalEggs.toLocaleString()}" icon="egg" colorClass="border-md-secondary"></stat-card>
+            <stat-card label="Total Deficit" value="${filteredLogs.reduce((sum, l) => sum + (l.cracked_count || 0), 0)}" icon="warning" colorClass="border-md-error"></stat-card>
+            <stat-card label="Input Analysis" value="${totalFeed}kg" icon="inventory_2" colorClass="border-md-tertiary"></stat-card>
+            <stat-card label="Cycle Average" value="${filteredLogs.length ? Math.round(totalEggs / filteredLogs.length) : 0}" icon="monitoring" colorClass="border-md-primary dark:border-md-dark-primary"></stat-card>
         `;
     }
 
     return html`
-        <stat-card label="Mortality Loss" value="${totalMortality}" icon="monitoring" colorClass="bg-rose-500"></stat-card>
-        <stat-card label="Input Total" value="${totalFeed}kg" icon="inventory_2" colorClass="bg-emerald-500"></stat-card>
-        <stat-card label="Record Volume" value="${filteredLogs.length}" icon="assignment" colorClass="bg-blue-500"></stat-card>
-        <stat-card label="Efficiency" value="N/A" icon="scale" colorClass="bg-amber-500"></stat-card>
+        <stat-card label="Mortality Loss" value="${totalMortality}" icon="monitoring" colorClass="border-md-error"></stat-card>
+        <stat-card label="Input Total" value="${totalFeed}kg" icon="inventory_2" colorClass="border-md-tertiary"></stat-card>
+        <stat-card label="Record Volume" value="${filteredLogs.length}" icon="assignment" colorClass="border-md-primary dark:border-md-dark-primary"></stat-card>
+        <stat-card label="Efficiency" value="N/A" icon="scale" colorClass="border-md-secondary"></stat-card>
     `;
   }
 
@@ -177,58 +177,56 @@ export class ProductionPage extends BasePage {
         </div>
 
         <!-- Record Modal -->
-        ${this.isModalOpen ? html`
-            <ui-modal 
-                .open=${this.isModalOpen} 
-                title="Operational Data Entry"
-                @modal-close=${this.closeModal}>
-                
-                <form id="prodForm" slot="body" @submit=${this.handleSave} class="space-y-4">
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Asset Unit Selection</label>
-                        <select name="flock_id" required 
-                            class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface outline-none transition-all">
-                            <option value="">-- AUTHORIZE UNIT --</option>
-                            ${this.flocks.map(f => html`<option value="${f.id}">${f.name} (${f.type})</option>`)}
-                        </select>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Yield Quantity</label>
-                            <input type="number" name="egg_count" defaultValue="0" 
-                                class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all" />
-                        </div>
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Damaged Yield</label>
-                            <input type="number" name="cracked_count" defaultValue="0" 
-                                class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all" />
-                        </div>
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Mortality Count</label>
-                            <input type="number" name="mortality_count" defaultValue="0" 
-                                class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all" />
-                        </div>
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Resource allocation (kg)</label>
-                            <input type="number" step="0.1" name="feed_consumed_kg" defaultValue="0" 
-                                class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all" />
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Audit Remarks</label>
-                        <textarea name="notes" rows="2" 
-                            class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all placeholder:text-neutral-400"></textarea>
-                    </div>
-                </form>
-
-                <div slot="footer" class="flex gap-2">
-                    <ui-button variant="outlined" size="sm" label="Discard" @click=${this.closeModal}></ui-button>
-                    <ui-button type="submit" form="prodForm" size="sm" .loading=${this.saving} label="Commit Record"></ui-button>
+        <ui-modal 
+            .open=${this.isModalOpen} 
+            title="Operational Data Entry"
+            @modal-close=${this.closeModal}>
+            
+            <form id="prodForm" slot="body" @submit=${this.handleSave} class="space-y-4">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Asset Unit Selection</label>
+                    <select name="flock_id" required 
+                        class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface outline-none transition-all">
+                        <option value="">-- AUTHORIZE UNIT --</option>
+                        ${this.flocks.map(f => html`<option value="${f.id}">${f.name} (${f.type})</option>`)}
+                    </select>
                 </div>
-            </ui-modal>
-        ` : ''}
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Yield Quantity</label>
+                        <input type="number" name="egg_count" defaultValue="0" 
+                            class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all" />
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Damaged Yield</label>
+                        <input type="number" name="cracked_count" defaultValue="0" 
+                            class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all" />
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Mortality Count</label>
+                        <input type="number" name="mortality_count" defaultValue="0" 
+                            class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all" />
+                    </div>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Resource allocation (kg)</label>
+                        <input type="number" step="0.1" name="feed_consumed_kg" defaultValue="0" 
+                            class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all" />
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Audit Remarks</label>
+                    <textarea name="notes" rows="2" 
+                        class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all placeholder:text-md-on-surface-variant/50"></textarea>
+                </div>
+            </form>
+
+            <div slot="footer" class="flex gap-2">
+                <ui-button variant="outlined" size="sm" label="Discard" @click=${this.closeModal}></ui-button>
+                <ui-button type="submit" form="prodForm" size="sm" .loading=${this.saving} label="Commit Record"></ui-button>
+            </div>
+        </ui-modal>
       </div>
     `;
   }

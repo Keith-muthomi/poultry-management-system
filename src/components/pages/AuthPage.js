@@ -17,49 +17,56 @@ export class AuthPage extends BasePage {
     this.mode = this.mode === 'login' ? 'register' : 'login';
   }
 
-  renderContent() {
+  render() {
     return html`
-      <div class="min-h-screen bg-md-background flex items-center justify-center px-6 animate-in fade-in duration-500">
-        <div class="bg-md-surface p-8 rounded-md-xl border border-md-outline-variant/30 w-full max-w-sm shadow-elevation-1">
+    <div class="min-h-screen bg-md-surface-container dark:bg-md-dark-surface-container flex items-center justify-center px-6 animate-in fade-in duration-500 transition-colors duration-300">
+
+        <div class="bg-md-surface dark:bg-md-dark-surface p-8 rounded-md-xl border border-md-outline/10 dark:border-md-dark-outline/10 w-full max-w-sm shadow-elevation-2">
 
           <div class="flex flex-col items-center mb-8">
-            <div class="w-12 h-12 rounded-md-md bg-md-primary flex items-center justify-center mb-4 shadow-elevation-1">
+            <div class="w-12 h-12 rounded-md-md bg-md-primary dark:bg-md-dark-primary flex items-center justify-center mb-4 shadow-elevation-1">
               <span class="material-symbols-rounded text-md-on-primary text-[28px]">eco</span>
             </div>
-            <h1 class="text-[24px] font-normal text-md-on-surface tracking-tight">
+            <h1 class="text-[24px] font-normal text-md-on-surface dark:text-md-dark-on-surface tracking-tight">
               ${this.mode === 'login' ? 'Sign in to PoultryDocs' : 'Create an account'}
             </h1>
-            <p class="text-md-on-surface-variant text-[14px] mt-1">Manage your farm with ease</p>
+            <p class="text-md-on-surface-variant dark:text-md-dark-on-surface-variant text-[14px] mt-1">Manage your farm with ease</p>
           </div>
 
-          <div class="flex flex-col gap-5">
+          <form class="flex flex-col gap-5" @submit=${(e) => e.preventDefault()}>
 
             ${this.mode === 'register' ? html`
               <div class="flex flex-col gap-1.5">
-                <label class="text-[14px] font-medium text-md-on-surface-variant ml-1">Full Name</label>
+                <label for="full-name" class="text-[14px] font-medium text-md-on-surface-variant dark:text-md-dark-on-surface-variant ml-1">Full Name</label>
                 <input
+                  id="full-name"
                   type="text"
                   placeholder="John Doe"
-                  class="bg-md-surface-variant/30 border-b border-md-outline rounded-t-md-xs p-3 text-[16px] focus:border-b-2 focus:border-md-primary outline-none transition-all placeholder:text-md-on-surface-variant/50"
+                  aria-label="Full Name"
+                  class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border-b border-md-outline dark:border-md-dark-outline rounded-t-md-xs p-3 text-[16px] text-md-on-surface dark:text-md-dark-on-surface focus:border-b-2 focus:border-md-primary dark:focus:border-md-dark-primary outline-none transition-all placeholder:text-md-on-surface-variant/50 dark:placeholder:text-md-dark-on-surface-variant/50"
                 />
               </div>
             ` : ''}
 
             <div class="flex flex-col gap-1.5">
-              <label class="text-[14px] font-medium text-md-on-surface-variant ml-1">Email Address</label>
+              <label for="email" class="text-[14px] font-medium text-md-on-surface-variant dark:text-md-dark-on-surface-variant ml-1">Email Address</label>
               <input
+                id="email"
                 type="email"
                 placeholder="you@example.com"
-                class="bg-md-surface-variant/30 border-b border-md-outline rounded-t-md-xs p-3 text-[16px] focus:border-b-2 focus:border-md-primary outline-none transition-all placeholder:text-md-on-surface-variant/50"
+                aria-label="Email Address"
+                class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border-b border-md-outline dark:border-md-dark-outline rounded-t-md-xs p-3 text-[16px] text-md-on-surface dark:text-md-dark-on-surface focus:border-b-2 focus:border-md-primary dark:focus:border-md-dark-primary outline-none transition-all placeholder:text-md-on-surface-variant/50 dark:placeholder:text-md-dark-on-surface-variant/50"
               />
             </div>
 
             <div class="flex flex-col gap-1.5">
-              <label class="text-[14px] font-medium text-md-on-surface-variant ml-1">Password</label>
+              <label for="password" class="text-[14px] font-medium text-md-on-surface-variant dark:text-md-dark-on-surface-variant ml-1">Password</label>
               <input
+                id="password"
                 type="password"
                 placeholder="••••••••"
-                class="bg-md-surface-variant/30 border-b border-md-outline rounded-t-md-xs p-3 text-[16px] focus:border-b-2 focus:border-md-primary outline-none transition-all placeholder:text-md-on-surface-variant/50"
+                aria-label="Password"
+                class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border-b border-md-outline dark:border-md-dark-outline rounded-t-md-xs p-3 text-[16px] text-md-on-surface dark:text-md-dark-on-surface focus:border-b-2 focus:border-md-primary dark:focus:border-md-dark-primary outline-none transition-all placeholder:text-md-on-surface-variant/50 dark:placeholder:text-md-dark-on-surface-variant/50"
               />
             </div>
 
@@ -68,16 +75,17 @@ export class AuthPage extends BasePage {
               fullWidth
               size="lg"
               label="${this.mode === 'login' ? 'Sign in' : 'Register'}" 
-              class="mt-2">
+              class="mt-2"
+              type="submit">
             </ui-button>
 
-          </div>
+          </form>
 
-          <div class="text-[14px] text-md-on-surface-variant text-center mt-6">
+          <div class="text-[14px] text-md-on-surface-variant dark:text-md-dark-on-surface-variant text-center mt-6">
             ${this.mode === 'login' ? "Don't have an account?" : 'Already have an account?'}
             <button
               @click=${() => this.toggleMode()}
-              class="text-md-primary font-medium hover:underline ml-1"
+              class="text-md-primary dark:text-md-dark-primary font-medium hover:underline ml-1"
             >
               ${this.mode === 'login' ? 'Register now' : 'Sign in instead'}
             </button>

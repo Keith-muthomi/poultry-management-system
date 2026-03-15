@@ -33,7 +33,7 @@ export class AppLayout extends LitElement {
 
   render() {
     return html`
-      <div class="flex h-screen bg-md-background dark:bg-md-dark-background overflow-hidden font-sans antialiased text-md-on-surface dark:text-md-dark-on-surface transition-colors duration-300">
+      <div class="flex h-screen bg-md-surface dark:bg-md-dark-surface overflow-hidden font-sans antialiased text-md-on-surface dark:text-md-dark-on-surface transition-colors duration-300">
         <!-- Material 3 Corporate Sidebar -->
         <side-nav 
           .currentPath=${this.currentPath}
@@ -43,15 +43,15 @@ export class AppLayout extends LitElement {
 
         <div class="flex flex-col flex-1 min-w-0 overflow-hidden relative">
           <!-- Corporate App Bar -->
-          <header class="h-14 bg-md-surface dark:bg-md-dark-surface border-b border-md-outline/10 dark:border-md-dark-outline/10 flex items-center justify-between px-6 shrink-0 z-10 sticky top-0 shadow-elevation-1 transition-colors duration-300">
+          <header class="h-14 bg-md-surface-container dark:bg-md-dark-surface-container border-b border-md-outline/15 dark:border-md-dark-outline/30 flex items-center justify-between px-6 shrink-0 z-10 sticky top-0 transition-colors duration-300">
             <div class="flex items-center gap-4">
               <button 
                 @click=${() => this.isMobileMenuOpen = !this.isMobileMenuOpen}
-                class="p-1.5 -ml-2 text-md-on-surface-variant dark:text-md-dark-on-surface-variant md:hidden hover:bg-md-surface-variant dark:hover:bg-md-dark-surface-variant rounded-md-full transition-colors">
+                class="p-1.5 -ml-2 text-md-on-surface-variant dark:text-md-dark-on-surface-variant md:hidden hover:bg-md-surface dark:hover:bg-md-dark-surface rounded-md-full transition-colors">
                 <span class="material-symbols-rounded text-[24px] leading-none">menu</span>
               </button>
               
-              <div class="flex items-center gap-2 px-3 py-1 bg-md-tertiary/5 dark:bg-md-tertiary/10 rounded-md-full border border-md-tertiary/10 dark:border-md-tertiary/20">
+              <div class="flex items-center gap-2 px-3 py-1 bg-md-tertiary/10 dark:bg-md-tertiary/20 rounded-md-full border border-md-tertiary/20 dark:border-md-tertiary/30">
                 <div class="w-1.5 h-1.5 rounded-full bg-md-tertiary animate-pulse"></div>
                 <p class="text-[11px] font-bold text-md-tertiary uppercase tracking-wider">
                   System Live

@@ -4,13 +4,12 @@
 
 @layer base {
   body {
-    @apply bg-md-background text-md-on-surface font-sans antialiased transition-colors duration-300;
+      @apply bg-md-surface-container text-md-on-surface font-sans antialiased transition-colors duration-300;
   }
 
   .dark body {
-    @apply bg-md-dark-background text-md-dark-on-surface;
+      @apply bg-md-dark-surface-container text-md-dark-on-surface;
   }
-
   h1, h2, h3, h4, h5, h6 {
     @apply font-bold tracking-tight text-md-on-surface transition-colors duration-300;
   }

@@ -24,6 +24,23 @@ export class UIButton extends LitElement {
     this.fullWidth = false;
   }
 
+  _handleClick(e) {
+    if (this.type === 'submit' && this.getAttribute('form')) {
+      const formId = this.getAttribute('form');
+      const root = this.getRootNode();
+      const form = root.getElementById ? root.getElementById(formId) : document.getElementById(formId);
+      if (form) {
+        // Create a temporary submit button to trigger validation and submit event
+        const tmpBtn = document.createElement('button');
+        tmpBtn.type = 'submit';
+        tmpBtn.style.display = 'none';
+        form.appendChild(tmpBtn);
+        tmpBtn.click();
+        form.removeChild(tmpBtn);
+      }
+    }
+  }
+
   render() {
     const baseClasses = "inline-flex items-center justify-center font-semibold transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed tracking-wide text-sm";
     
@@ -50,9 +67,10 @@ export class UIButton extends LitElement {
 
     return html`
         <button 
-            type=${this.type}
+            type=${this.type === 'submit' && this.getAttribute('form') ? 'button' : this.type}
             ?disabled=${this.disabled || this.loading}
             class=${classes}
+            @click=${this._handleClick}
         >
             ${this.loading ? html`
               <svg class="animate-spin h-4 w-4 text-current mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
