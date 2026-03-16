@@ -11,7 +11,8 @@ export class ProductionPage extends BasePage {
     logs: { type: Array },
     flocks: { type: Array },
     isModalOpen: { type: Boolean },
-    saving: { type: Boolean }
+    saving: { type: Boolean },
+    toast: { type: Object }
   };
 
   constructor() {
@@ -21,20 +22,21 @@ export class ProductionPage extends BasePage {
     this.flocks = [];
     this.isModalOpen = false;
     this.saving = false;
+    this.toast = { open: false, message: '', type: 'info' };
 
     this.layerColumns = [
       { key: 'date', label: 'Cycle Date', render: (val) => new Date(val).toLocaleDateString() },
       { key: 'flock_name', label: 'Asset Unit' },
       { key: 'egg_count', label: 'Yield' },
-      { key: 'cracked_count', label: 'Loss (Broken)', render: (val) => html`<span class="text-md-error dark:text-md-error font-bold">${val}</span>` },
-      { key: 'mortality_count', label: 'Loss (Mort)', render: (val) => html`<span class="text-md-error dark:text-md-error font-bold">${val}</span>` },
+      { key: 'cracked_count', label: 'Loss (Broken)', render: (val) => html`<span class="text-error-600 dark:text-error-500 font-bold">${val}</span>` },
+      { key: 'mortality_count', label: 'Loss (Mort)', render: (val) => html`<span class="text-error-600 dark:text-error-500 font-bold">${val}</span>` },
       { key: 'feed_consumed_kg', label: 'Resource (kg)' },
     ];
 
     this.broilerColumns = [
       { key: 'date', label: 'Cycle Date', render: (val) => new Date(val).toLocaleDateString() },
       { key: 'flock_name', label: 'Asset Unit' },
-      { key: 'mortality_count', label: 'Loss', render: (val) => html`<span class="text-md-error dark:text-md-error font-bold">${val}</span>` },
+      { key: 'mortality_count', label: 'Loss', render: (val) => html`<span class="text-error-600 dark:text-error-500 font-bold">${val}</span>` },
       { key: 'feed_consumed_kg', label: 'Resource (kg)' },
       { key: 'notes', label: 'Internal Notes' }
     ];
@@ -61,6 +63,10 @@ export class ProductionPage extends BasePage {
     }
   }
 
+  showToast(message, type = 'info') {
+    this.toast = { open: true, message, type };
+  }
+
   openRecordModal() {
     this.isModalOpen = true;
   }
@@ -84,10 +90,11 @@ export class ProductionPage extends BasePage {
     this.saving = true;
     try {
       await ProductionService.recordLog(data);
+      this.showToast('Production log recorded successfully.', 'success');
       this.closeModal();
       await this.fetchData();
     } catch (err) {
-      alert('Operational record commit failed: ' + err.message);
+      this.showToast(`Failed to record log: ${err.message}`, 'error');
     } finally {
       this.saving = false;
     }
@@ -95,8 +102,13 @@ export class ProductionPage extends BasePage {
 
   async handleDelete(row) {
     if (confirm('Authorize deletion of this operational log?')) {
-      await ProductionService.deleteLog(row.id);
-      await this.fetchData();
+      try {
+        await ProductionService.deleteLog(row.id);
+        this.showToast('Log deleted successfully.', 'success');
+        await this.fetchData();
+      } catch (err) {
+        this.showToast('Failed to delete log.', 'error');
+      }
     }
   }
 
@@ -108,18 +120,18 @@ export class ProductionPage extends BasePage {
 
     if (this.mode === 'layers') {
         return html`
-            <stat-card label="Aggregate Yield" value="${totalEggs.toLocaleString()}" icon="egg" colorClass="border-md-secondary"></stat-card>
-            <stat-card label="Total Deficit" value="${filteredLogs.reduce((sum, l) => sum + (l.cracked_count || 0), 0)}" icon="warning" colorClass="border-md-error"></stat-card>
-            <stat-card label="Input Analysis" value="${totalFeed}kg" icon="inventory_2" colorClass="border-md-tertiary"></stat-card>
-            <stat-card label="Cycle Average" value="${filteredLogs.length ? Math.round(totalEggs / filteredLogs.length) : 0}" icon="monitoring" colorClass="border-md-primary dark:border-md-dark-primary"></stat-card>
+            <stat-card label="Aggregate Yield" value="${totalEggs.toLocaleString()}" icon="egg" colorClass="border-secondary-500"></stat-card>
+            <stat-card label="Total Deficit" value="${filteredLogs.reduce((sum, l) => sum + (l.cracked_count || 0), 0)}" icon="warning" colorClass="border-error-500"></stat-card>
+            <stat-card label="Input Analysis" value="${totalFeed}kg" icon="inventory_2" colorClass="border-tertiary-500"></stat-card>
+            <stat-card label="Cycle Average" value="${filteredLogs.length ? Math.round(totalEggs / filteredLogs.length) : 0}" icon="monitoring" colorClass="border-primary-500 dark:border-primary-400"></stat-card>
         `;
     }
 
     return html`
-        <stat-card label="Mortality Loss" value="${totalMortality}" icon="monitoring" colorClass="border-md-error"></stat-card>
-        <stat-card label="Input Total" value="${totalFeed}kg" icon="inventory_2" colorClass="border-md-tertiary"></stat-card>
-        <stat-card label="Record Volume" value="${filteredLogs.length}" icon="assignment" colorClass="border-md-primary dark:border-md-dark-primary"></stat-card>
-        <stat-card label="Efficiency" value="N/A" icon="scale" colorClass="border-md-secondary"></stat-card>
+        <stat-card label="Mortality Loss" value="${totalMortality}" icon="monitoring" colorClass="border-error-500"></stat-card>
+        <stat-card label="Input Total" value="${totalFeed}kg" icon="inventory_2" colorClass="border-tertiary-500"></stat-card>
+        <stat-card label="Record Volume" value="${filteredLogs.length}" icon="assignment" colorClass="border-primary-500 dark:border-primary-400"></stat-card>
+        <stat-card label="Efficiency" value="N/A" icon="scale" colorClass="border-secondary-500"></stat-card>
     `;
   }
 
@@ -133,13 +145,13 @@ export class ProductionPage extends BasePage {
         <!-- Header -->
         <div class="flex items-center justify-between flex-wrap gap-4">
           <div class="flex flex-col gap-0.5">
-            <h1 class="text-2xl font-bold text-md-on-surface dark:text-md-dark-on-surface tracking-tight">Production Management</h1>
-            <p class="text-md-on-surface-variant dark:text-md-dark-on-surface-variant text-[12px] font-medium uppercase tracking-wider">Operation / Asset Monitoring</p>
+            <h1 class="text-2xl font-bold text-neutral-900 dark:text-neutral-50 tracking-tight">Production Management</h1>
+            <p class="text-neutral-500 dark:text-neutral-400 text-[12px] font-medium uppercase tracking-wider">Operation / Asset Monitoring</p>
           </div>
 
           <div class="flex items-center gap-2">
             <select
-              class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-1.5 text-xs font-bold text-md-on-surface dark:text-md-dark-on-surface outline-none transition-all appearance-none"
+              class="bg-neutral-200/30 dark:bg-neutral-800/30 border border-neutral-300/20 dark:border-neutral-700/20 rounded-md-xs px-3 py-1.5 text-xs font-bold text-neutral-900 dark:text-neutral-50 outline-none transition-all appearance-none"
               @change=${e => this.mode = e.target.value}
             >
               <option value="layers">LAYER ASSETS</option>
@@ -163,8 +175,8 @@ export class ProductionPage extends BasePage {
 
         <!-- Logs -->
         <div class="flex flex-col gap-4">
-            <div class="flex items-center justify-between border-b border-md-outline/10 dark:border-md-dark-outline/10 pb-2">
-                <h2 class="text-[14px] font-bold text-md-on-surface dark:text-md-dark-on-surface uppercase tracking-wider">Operational Audit logs</h2>
+            <div class="flex items-center justify-between border-b border-neutral-200/10 dark:border-neutral-800/10 pb-2">
+                <h2 class="text-[14px] font-bold text-neutral-900 dark:text-neutral-50 uppercase tracking-wider">Operational Audit logs</h2>
             </div>
 
             <ui-table
@@ -184,9 +196,9 @@ export class ProductionPage extends BasePage {
             
             <form id="prodForm" slot="body" @submit=${this.handleSave} class="space-y-4">
                 <div class="flex flex-col gap-1.5">
-                    <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Asset Unit Selection</label>
+                    <label class="text-[11px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Asset Unit Selection</label>
                     <select name="flock_id" required 
-                        class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface outline-none transition-all">
+                        class="bg-neutral-200/30 dark:bg-neutral-800/30 border border-neutral-300/20 dark:border-neutral-700/20 rounded-md-xs px-3 py-2 text-[13px] text-neutral-900 dark:text-neutral-50 outline-none transition-all">
                         <option value="">-- AUTHORIZE UNIT --</option>
                         ${this.flocks.map(f => html`<option value="${f.id}">${f.name} (${f.type})</option>`)}
                     </select>
@@ -194,31 +206,31 @@ export class ProductionPage extends BasePage {
 
                 <div class="grid grid-cols-2 gap-4">
                     <div class="flex flex-col gap-1.5">
-                        <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Yield Quantity</label>
+                        <label class="text-[11px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Yield Quantity</label>
                         <input type="number" name="egg_count" defaultValue="0" 
-                            class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all" />
+                            class="bg-neutral-200/30 dark:bg-neutral-800/30 border border-neutral-300/20 dark:border-neutral-700/20 rounded-md-xs px-3 py-2 text-[13px] text-neutral-900 dark:text-neutral-50 focus:border-primary-500 outline-none transition-all" />
                     </div>
                     <div class="flex flex-col gap-1.5">
-                        <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Damaged Yield</label>
+                        <label class="text-[11px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Damaged Yield</label>
                         <input type="number" name="cracked_count" defaultValue="0" 
-                            class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all" />
+                            class="bg-neutral-200/30 dark:bg-neutral-800/30 border border-neutral-300/20 dark:border-neutral-700/20 rounded-md-xs px-3 py-2 text-[13px] text-neutral-900 dark:text-neutral-50 focus:border-primary-500 outline-none transition-all" />
                     </div>
                     <div class="flex flex-col gap-1.5">
-                        <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Mortality Count</label>
+                        <label class="text-[11px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Mortality Count</label>
                         <input type="number" name="mortality_count" defaultValue="0" 
-                            class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all" />
+                            class="bg-neutral-200/30 dark:bg-neutral-800/30 border border-neutral-300/20 dark:border-neutral-700/20 rounded-md-xs px-3 py-2 text-[13px] text-neutral-900 dark:text-neutral-50 focus:border-primary-500 outline-none transition-all" />
                     </div>
                     <div class="flex flex-col gap-1.5">
-                        <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Resource allocation (kg)</label>
+                        <label class="text-[11px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Resource allocation (kg)</label>
                         <input type="number" step="0.1" name="feed_consumed_kg" defaultValue="0" 
-                            class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all" />
+                            class="bg-neutral-200/30 dark:bg-neutral-800/30 border border-neutral-300/20 dark:border-neutral-700/20 rounded-md-xs px-3 py-2 text-[13px] text-neutral-900 dark:text-neutral-50 focus:border-primary-500 outline-none transition-all" />
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-1.5">
-                    <label class="text-[11px] font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider">Audit Remarks</label>
+                    <label class="text-[11px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Audit Remarks</label>
                     <textarea name="notes" rows="2" 
-                        class="bg-md-surface-variant/30 dark:bg-md-dark-surface-variant/30 border border-md-outline/20 dark:border-md-dark-outline/20 rounded-md-xs px-3 py-2 text-[13px] text-md-on-surface dark:text-md-dark-on-surface focus:border-md-primary outline-none transition-all placeholder:text-md-on-surface-variant/50"></textarea>
+                        class="bg-neutral-200/30 dark:bg-neutral-800/30 border border-neutral-300/20 dark:border-neutral-700/20 rounded-md-xs px-3 py-2 text-[13px] text-neutral-900 dark:text-neutral-50 focus:border-primary-500 outline-none transition-all placeholder:text-neutral-500/50"></textarea>
                 </div>
             </form>
 
@@ -227,6 +239,12 @@ export class ProductionPage extends BasePage {
                 <ui-button type="submit" form="prodForm" size="sm" .loading=${this.saving} label="Commit Record"></ui-button>
             </div>
         </ui-modal>
+        <ui-toast 
+            .open=${this.toast.open} 
+            .message=${this.toast.message} 
+            .type=${this.toast.type}
+            @toast-closed=${() => this.toast = { ...this.toast, open: false }}>
+        </ui-toast>
       </div>
     `;
   }

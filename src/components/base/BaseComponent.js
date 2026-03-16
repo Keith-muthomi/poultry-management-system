@@ -50,16 +50,16 @@ export class BaseComponent extends LitElement {
   renderLoading() {
     return html`
       <div class="flex flex-col items-center justify-center p-12 animate-pulse">
-        <div class="w-8 h-8 border-4 border-md-primary-container dark:border-md-dark-primary-container border-t-md-primary dark:border-t-md-dark-primary rounded-full animate-spin mb-4"></div>
-        <span class="text-md-on-surface-variant dark:text-md-dark-on-surface-variant text-sm font-medium">Fetching data...</span>
+        <div class="w-8 h-8 border-4 border-primary-100 dark:border-primary-900 border-t-primary-600 dark:border-t-primary-500 rounded-full animate-spin mb-4"></div>
+        <span class="text-neutral-500 dark:text-neutral-400 text-sm font-medium">Fetching data...</span>
       </div>
     `;
   }
 
   renderError() {
     return html`
-      <div class="m-4 p-4 bg-md-error-container border border-md-error/20 text-md-on-error-container rounded-lg flex items-center gap-3">
-        <span class="material-symbols-rounded text-md-error">error</span>
+      <div class="m-4 p-4 bg-error-100/50 border border-error-200/20 text-error-700 dark:text-error-300 rounded-lg flex items-center gap-3">
+        <span class="material-symbols-rounded text-error-500">error</span>
         <div class="flex-1 text-sm font-medium">${this.error}</div>
         <button @click=${() => window.location.reload()} class="text-xs underline">Retry</button>
       </div>
@@ -69,8 +69,8 @@ export class BaseComponent extends LitElement {
   renderEmpty() {
     return html`
       <div class="flex flex-col items-center justify-center p-12 text-center">
-        <span class="material-symbols-rounded text-md-on-surface-variant/30 dark:text-md-dark-on-surface-variant/30 text-5xl mb-2">inventory_2</span>
-        <p class="text-md-on-surface-variant dark:text-md-dark-on-surface-variant font-medium">No records found</p>
+        <span class="material-symbols-rounded text-neutral-500/30 dark:text-neutral-400/30 text-5xl mb-2">inventory_2</span>
+        <p class="text-neutral-500 dark:text-neutral-400 font-medium">No records found</p>
       </div>
     `;
   }

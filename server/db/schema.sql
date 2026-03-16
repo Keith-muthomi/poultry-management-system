@@ -1,5 +1,15 @@
 -- Poultry Management System Schema
 
+-- Users Table
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  role TEXT DEFAULT 'Admin',
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Flocks Table
 CREATE TABLE IF NOT EXISTS flocks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,6 +38,10 @@ CREATE TABLE IF NOT EXISTS production (
 );
 
 -- Mock Data (Only inserted if table is empty)
+INSERT INTO users (name, email, password, role)
+SELECT 'System Administrator', 'admin@poultrydocs.com', 'admin123', 'Admin'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'admin@poultrydocs.com');
+
 INSERT INTO flocks (name, type, breed, initial_count, current_count, hatch_date, pen_id, status)
 SELECT 'Layer Batch A', 'Layers', 'Hy-Line Brown', 3200, 3200, '2023-08-15', 'Pen 03', 'Active'
 WHERE NOT EXISTS (SELECT 1 FROM flocks WHERE name = 'Layer Batch A');

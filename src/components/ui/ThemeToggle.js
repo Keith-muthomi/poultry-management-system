@@ -33,7 +33,7 @@ export class ThemeToggle extends LitElement {
     return html`
       <button 
         @click=${this.toggleTheme}
-        class="w-10 h-10 flex items-center justify-center rounded-md-full bg-md-surface-variant/50 dark:bg-md-dark-surface-variant/50 text-md-on-surface-variant dark:text-md-dark-on-surface-variant hover:bg-md-surface-variant dark:hover:bg-md-dark-surface-variant transition-all duration-200"
+        class="w-10 h-10 flex items-center justify-center rounded-md-full bg-neutral-200/50 dark:bg-neutral-800/50 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-all duration-200"
         title="Toggle Theme"
       >
         <span class="material-symbols-rounded text-[24px]">

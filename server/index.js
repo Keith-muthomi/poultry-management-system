@@ -4,6 +4,7 @@ const path = require('path');
 const cors = require('cors');
 const flockRoutes = require('./routes/flocks');
 const productionRoutes = require('./routes/production');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,6 +18,7 @@ app.use(express.static(distPath));
 // API Routes
 app.use('/api/flocks', flockRoutes);
 app.use('/api/production', productionRoutes);
+app.use('/api/auth', authRoutes);
 
 // Example fallback/debug route
 app.get('/api/health', (req, res) => {

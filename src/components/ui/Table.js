@@ -30,13 +30,13 @@ export class UITable extends LitElement {
     if (!this.actions.length) return '';
 
     return html`
-      <td class="px-2 py-1.5 text-right border-b border-md-outline/5 dark:border-md-dark-outline/5">
+      <td class="px-2 py-1.5 text-right border-b border-neutral-200/5 dark:border-neutral-800/5">
         <div class="flex items-center justify-end gap-0.5">
           ${this.actions.map(action => html`
             <button
               @click=${(e) => { e.stopPropagation(); action.handler(row); }}
               title=${action.label}
-              class="p-1.5 rounded-md-full text-md-on-surface-variant dark:text-md-dark-on-surface-variant hover:bg-md-primary/10 dark:hover:bg-md-dark-primary/10 transition-colors">
+              class="p-1.5 rounded-md-full text-neutral-500 dark:text-neutral-400 hover:bg-primary-600/10 dark:hover:bg-primary-500/10 transition-colors">
               <span class="material-symbols-rounded text-[18px] leading-none">${action.icon}</span>
             </button>
           `)}
@@ -47,13 +47,13 @@ export class UITable extends LitElement {
 
   render() {
     return html`
-      <div class="w-full bg-md-surface dark:bg-md-dark-surface rounded-md-md border border-md-outline/10 dark:border-md-dark-outline/10 overflow-hidden transition-all duration-300">
+      <div class="w-full bg-white dark:bg-neutral-900 rounded-md-md border border-neutral-200/10 dark:border-neutral-800/10 overflow-hidden transition-all duration-300">
         <div class="overflow-x-auto">
           <table class="w-full text-[13px] text-left border-collapse">
             <thead>
-              <tr class="bg-md-surface-variant/50 dark:bg-md-dark-surface-variant/50 border-b border-md-outline/10 dark:border-md-dark-outline/10">
+              <tr class="bg-neutral-200/50 dark:bg-neutral-800/50 border-b border-neutral-200/10 dark:border-neutral-800/10">
                 ${this.columns.map(col => html`
-                  <th class="px-4 py-2.5 font-bold text-md-on-surface-variant dark:text-md-dark-on-surface-variant uppercase tracking-wider text-[11px]
+                  <th class="px-4 py-2.5 font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider text-[11px]
                     ${col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : 'text-left'}">
                     ${col.label}
                   </th>`)}
@@ -66,19 +66,19 @@ export class UITable extends LitElement {
                 ${[...Array(3)].map(() => html`
                   <tr>
                     ${this.columns.map(() => html`
-                      <td class="px-4 py-3 border-b border-md-outline/5 dark:border-md-dark-outline/5"><div class="h-3 bg-md-surface-variant dark:bg-md-dark-surface-variant rounded w-3/4 animate-pulse"></div></td>`)}
-                    ${this.actions.length ? html`<td class="px-4 py-3 border-b border-md-outline/5 dark:border-md-dark-outline/5"></td>` : ''}
+                      <td class="px-4 py-3 border-b border-neutral-200/5 dark:border-neutral-800/5"><div class="h-3 bg-neutral-200 dark:bg-neutral-800 rounded w-3/4 animate-pulse"></div></td>`)}
+                    ${this.actions.length ? html`<td class="px-4 py-3 border-b border-neutral-200/5 dark:border-neutral-800/5"></td>` : ''}
                   </tr>`)}
               ` : this.data.length === 0 ? html`
                 <tr>
-                  <td colspan="100%" class="px-4 py-10 text-center text-md-on-surface-variant dark:text-md-dark-on-surface-variant opacity-50 italic">
+                  <td colspan="100%" class="px-4 py-10 text-center text-neutral-500 dark:text-neutral-400 opacity-50 italic">
                     ${this.emptyMessage}
                   </td>
                 </tr>
               ` : this.data.map(row => html`
-                <tr class="hover:bg-md-primary/5 dark:hover:bg-md-dark-primary/5 transition-colors duration-75 group">
+                <tr class="hover:bg-primary-600/5 dark:hover:bg-primary-500/5 transition-colors duration-75 group">
                   ${this.columns.map(col => html`
-                    <td class="px-4 py-2 border-b border-md-outline/5 dark:border-md-dark-outline/5 text-md-on-surface dark:text-md-dark-on-surface
+                    <td class="px-4 py-2 border-b border-neutral-200/5 dark:border-neutral-800/5 text-neutral-900 dark:text-neutral-50
                       ${col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : ''}">
                       ${this._renderCell(row, col)}
                     </td>`)}

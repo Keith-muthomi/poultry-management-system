@@ -45,11 +45,11 @@ export class UIButton extends LitElement {
     const baseClasses = "inline-flex items-center justify-center font-semibold transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed tracking-wide text-sm";
     
     const variants = {
-      'filled': 'bg-md-primary dark:bg-md-dark-primary text-md-on-primary dark:text-md-on-primary hover:shadow-elevation-2 active:opacity-90',
-      'tonal': 'bg-md-primary-container dark:bg-md-dark-primary-container text-md-on-primary-container dark:text-md-on-primary-container hover:shadow-elevation-1 active:opacity-90',
-      'outlined': 'bg-transparent border border-md-outline dark:border-md-dark-outline text-md-primary dark:text-md-dark-primary hover:bg-md-primary/5 dark:hover:bg-md-dark-primary/5',
-      'text': 'bg-transparent text-md-primary dark:text-md-dark-primary hover:bg-md-primary/10 dark:hover:bg-md-dark-primary/10',
-      'danger': 'bg-md-error text-md-on-error hover:shadow-elevation-2 active:opacity-90',
+      'filled': 'bg-primary-600 dark:bg-primary-500 text-white hover:shadow-elevation-2 active:opacity-90',
+      'tonal': 'bg-primary-100 dark:bg-primary-900/30 text-primary-900 dark:text-primary-100 hover:shadow-elevation-1 active:opacity-90',
+      'outlined': 'bg-transparent border border-neutral-300 dark:border-neutral-700 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20',
+      'text': 'bg-transparent text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20',
+      'danger': 'bg-error-600 dark:bg-error-500 text-white hover:shadow-elevation-2 active:opacity-90',
     };
 
     const sizes = {

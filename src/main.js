@@ -11,8 +11,10 @@ import './components/ui/StatCard.js';
 import './components/ui/Table.js';
 import './components/ui/Button.js';
 import './components/ui/Modal.js';
+import './components/ui/Toast.js';
 
 import 'material-symbols';
+import { AuthService } from './services/AuthService.js';
 
 class ClientRouter {
     constructor(options = {}) {
@@ -57,6 +59,18 @@ class ClientRouter {
 
     async navigate(path, addToHistory = true) {
         const navId = ++this.navCounter;
+        
+        // AUTH GUARD
+        if (!AuthService.isAuthenticated() && path !== '/auth') {
+            console.log('[Router] Unauthenticated - Redirecting to /auth');
+            path = '/auth';
+            addToHistory = true;
+        } else if (AuthService.isAuthenticated() && path === '/auth') {
+            console.log('[Router] Authenticated - Redirecting to home');
+            path = '/';
+            addToHistory = true;
+        }
+
         const route = this.findRoute(path);
 
         if (!route) {

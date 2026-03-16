@@ -2,13 +2,17 @@ Poultry Management System
 A specialized management solution for poultry farming operations, built to streamline record-keeping and production monitoring.
 
 🚀 Tech Stack
-Frontend: Vanilla JS, Web Components, Vite, Tailwind CSS
+Frontend: Vanilla JS (Lit), Web Components, Vite, Tailwind CSS
 
 Backend: Node.js, Express
 
-Database: SQLite
+Database: SQLite (better-sqlite3)
 
 Task Management: Nodemon, Concurrently
+
+## 🔐 Default Login Credentials
+- **Email**: `admin@poultrydocs.com`
+- **Password**: `admin123`
 
 📋 Features
 Inventory Management: Track poultry stock levels.
