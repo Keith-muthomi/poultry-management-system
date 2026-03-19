@@ -243,7 +243,20 @@ export class FlockPage extends BasePage {
           <div class="flex items-center justify-between border-b border-neutral-200/10 dark:border-neutral-800/10 pb-2">
             <h2 class="text-[14px] font-bold text-neutral-900 dark:text-neutral-50 uppercase tracking-wider">Asset Registry</h2>
           </div>
-          <ui-table .columns=${this.columns} .data=${this.flocks} .actions=${this.tableActions}></ui-table>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            ${this.flocks.map(flock => html`
+              <flock-card .flock=${flock} .actions=${this.tableActions}></flock-card>
+            `)}
+          </div>
+
+          ${this.flocks.length === 0 ? html`
+            <div class="flex flex-col items-center justify-center py-12 bg-neutral-100/50 dark:bg-neutral-900/50 rounded-lg border border-dashed border-neutral-300 dark:border-neutral-700">
+              <span class="material-symbols-rounded text-[48px] text-neutral-400">inventory</span>
+              <p class="mt-2 text-neutral-500 dark:text-neutral-400 font-medium">No active batches found in the registry.</p>
+              <ui-button variant="outlined" size="sm" label="Register First Batch" class="mt-4" @click=${this.openAddModal}></ui-button>
+            </div>
+          ` : ''}
         </div>
 
         <!-- Modal -->

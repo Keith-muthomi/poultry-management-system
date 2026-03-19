@@ -9,6 +9,10 @@ export const AuthService = {
     return response;
   },
 
+  async verifyAdmin(id, secondaryPassword) {
+    return api.post('/auth/verify-admin', { id, secondaryPassword });
+  },
+
   async register(data) {
     return api.post('/auth/register', data);
   },

@@ -59,7 +59,7 @@ export class UIToast extends LitElement {
   }
 
   _getClasses() {
-    let baseClasses = "flex items-center gap-3 p-4 rounded-md shadow-lg transition-all duration-300";
+    let baseClasses = "flex items-center gap-3 p-4 rounded-lg shadow-lg transition-all duration-300";
     let typeClasses = "";
 
     switch (this.type) {

@@ -7,7 +7,10 @@ export const api = {
   async get(endpoint) {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`);
-      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
       return await response.json();
     } catch (error) {
       console.error(`[API GET] ${endpoint} failed:`, error);
@@ -22,7 +25,10 @@ export const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
       return await response.json();
     } catch (error) {
       console.error(`[API POST] ${endpoint} failed:`, error);
@@ -37,7 +43,10 @@ export const api = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
       return await response.json();
     } catch (error) {
       console.error(`[API PUT] ${endpoint} failed:`, error);
@@ -50,7 +59,10 @@ export const api = {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'DELETE',
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
       return await response.json();
     } catch (error) {
       console.error(`[API DELETE] ${endpoint} failed:`, error);

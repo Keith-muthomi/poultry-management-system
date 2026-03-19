@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS users (
   name TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL,
-  role TEXT DEFAULT 'Admin',
+  role TEXT DEFAULT 'User',
+  status TEXT DEFAULT 'Active' CHECK(status IN ('Active', 'Suspended')),
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -37,19 +38,78 @@ CREATE TABLE IF NOT EXISTS production (
   FOREIGN KEY (flock_id) REFERENCES flocks (id)
 );
 
--- Mock Data (Only inserted if table is empty)
-INSERT INTO users (name, email, password, role)
-SELECT 'System Administrator', 'admin@poultrydocs.com', 'admin123', 'Admin'
+-- Supplies Table
+CREATE TABLE IF NOT EXISTS supplies (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL,
+  category TEXT NOT NULL,
+  quantity REAL DEFAULT 0,
+  unit TEXT,
+  min_threshold REAL DEFAULT 0,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Finance Table (Sales, Expenses, Revenue)
+CREATE TABLE IF NOT EXISTS finance (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  type TEXT CHECK(type IN ('Sale', 'Expense')) NOT NULL,
+  category TEXT NOT NULL,
+  amount REAL NOT NULL,
+  description TEXT,
+  date DATE DEFAULT (DATE('now')),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Mock Data for Supplies
+INSERT INTO supplies (name, category, quantity, unit, min_threshold)
+SELECT 'Starter Feed', 'Feed', 500, 'kg', 100
+WHERE NOT EXISTS (SELECT 1 FROM supplies WHERE name = 'Starter Feed');
+
+INSERT INTO supplies (name, category, quantity, unit, min_threshold)
+SELECT 'Newcastle Vaccine', 'Medicine', 50, 'vials', 10
+WHERE NOT EXISTS (SELECT 1 FROM supplies WHERE name = 'Newcastle Vaccine');
+
+-- Mock Data for Finance
+INSERT INTO finance (type, category, amount, description, date)
+SELECT 'Sale', 'Eggs', 1200, 'Sold 100 trays of eggs', '2024-03-10'
+WHERE NOT EXISTS (SELECT 1 FROM finance WHERE description = 'Sold 100 trays of eggs');
+
+-- Protocols Table
+CREATE TABLE IF NOT EXISTS protocols (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  time TEXT,
+  location TEXT,
+  status TEXT DEFAULT 'Pending' CHECK(status IN ('Pending', 'Completed', 'Next Up')),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Mock Data for Protocols
+INSERT INTO protocols (title, time, location, status)
+SELECT 'Morning Vaccination', '08:00 AM', 'Batch A-03', 'Completed'
+WHERE NOT EXISTS (SELECT 1 FROM protocols WHERE title = 'Morning Vaccination');
+
+INSERT INTO protocols (title, time, location, status)
+SELECT 'Feed Refill', '02:00 PM', 'All Pens', 'Next Up'
+WHERE NOT EXISTS (SELECT 1 FROM protocols WHERE title = 'Feed Refill');
+
+-- Mock Data for Users
+INSERT INTO users (name, email, password, role, status)
+SELECT 'System Admin', 'admin@poultrydocs.com', 'admin123', 'Admin', 'Active'
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'admin@poultrydocs.com');
 
-INSERT INTO flocks (name, type, breed, initial_count, current_count, hatch_date, pen_id, status)
-SELECT 'Layer Batch A', 'Layers', 'Hy-Line Brown', 3200, 3200, '2023-08-15', 'Pen 03', 'Active'
-WHERE NOT EXISTS (SELECT 1 FROM flocks WHERE name = 'Layer Batch A');
+INSERT INTO users (name, email, password, role, status)
+SELECT 'John Farm Manager', 'john@poultrydocs.com', 'password123', 'User', 'Active'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'john@poultrydocs.com');
 
-INSERT INTO flocks (name, type, breed, initial_count, current_count, hatch_date, pen_id, status)
-SELECT 'Broiler Batch B', 'Broilers', 'Cobb 500', 4600, 4600, '2024-02-10', 'Pen 06', 'Active'
-WHERE NOT EXISTS (SELECT 1 FROM flocks WHERE name = 'Broiler Batch B');
+INSERT INTO users (name, email, password, role, status)
+SELECT 'Sarah Records', 'sarah@poultrydocs.com', 'password123', 'User', 'Active'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'sarah@poultrydocs.com');
 
-INSERT INTO flocks (name, type, breed, initial_count, current_count, hatch_date, pen_id, status)
-SELECT 'Layer Batch C', 'Layers', 'Lohmann Brown', 2500, 2500, '2024-01-05', 'Pen 01', 'Active'
-WHERE NOT EXISTS (SELECT 1 FROM flocks WHERE name = 'Layer Batch C');
+INSERT INTO users (name, email, password, role, status)
+SELECT 'Michael Finance', 'michael@poultrydocs.com', 'password123', 'User', 'Active'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'michael@poultrydocs.com');
+
+INSERT INTO users (name, email, password, role, status)
+SELECT 'David Suspended', 'david@poultrydocs.com', 'password123', 'User', 'Suspended'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'david@poultrydocs.com');

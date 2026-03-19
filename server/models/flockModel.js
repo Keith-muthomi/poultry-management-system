@@ -2,7 +2,17 @@ const db = require('../db/database');
 
 const FlockModel = {
   getAll: () => {
-    return db.prepare('SELECT * FROM flocks ORDER BY created_at DESC').all();
+    return db.prepare(`
+      SELECT 
+        f.*,
+        COALESCE(SUM(p.egg_count), 0) as total_production,
+        COALESCE(SUM(p.feed_consumed_kg), 0) as total_consumption,
+        COALESCE(SUM(p.mortality_count), 0) as total_mortality_recorded
+      FROM flocks f
+      LEFT JOIN production p ON f.id = p.flock_id
+      GROUP BY f.id
+      ORDER BY f.created_at DESC
+    `).all();
   },
 
   getById: (id) => {

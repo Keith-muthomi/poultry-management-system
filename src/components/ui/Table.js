@@ -32,14 +32,19 @@ export class UITable extends LitElement {
     return html`
       <td class="px-2 py-1.5 text-right border-b border-neutral-200/5 dark:border-neutral-800/5">
         <div class="flex items-center justify-end gap-0.5">
-          ${this.actions.map(action => html`
-            <button
-              @click=${(e) => { e.stopPropagation(); action.handler(row); }}
-              title=${action.label}
-              class="p-1.5 rounded-md-full text-neutral-500 dark:text-neutral-400 hover:bg-primary-600/10 dark:hover:bg-primary-500/10 transition-colors">
-              <span class="material-symbols-rounded text-[18px] leading-none">${action.icon}</span>
-            </button>
-          `)}
+          ${this.actions.map(action => {
+            const icon = typeof action.icon === 'function' ? action.icon(row) : action.icon;
+            const label = typeof action.label === 'function' ? action.label(row) : action.label;
+            
+            return html`
+              <button
+                @click=${(e) => { e.stopPropagation(); action.handler(row); }}
+                title=${label}
+                class="p-1.5 rounded-md-full text-neutral-500 dark:text-neutral-400 hover:bg-primary-600/10 dark:hover:bg-primary-500/10 transition-colors">
+                <span class="material-symbols-rounded text-[18px] leading-none">${icon}</span>
+              </button>
+            `;
+          })}
         </div>
       </td>
     `;
