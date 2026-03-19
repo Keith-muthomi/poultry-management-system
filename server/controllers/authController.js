@@ -55,7 +55,7 @@ const AuthController = {
     try {
       const stmt = db.prepare('UPDATE users SET name = ?, email = ? WHERE id = ?');
       stmt.run(name, email, id);
-      const user = db.prepare('SELECT id, name, email, role, status FROM users WHERE id = ?').get(id);
+      const user = db.prepare('SELECT id, name, email, role, status, farm_id FROM users WHERE id = ?').get(id);
       res.json({ user, message: 'Profile updated successfully' });
     } catch (err) {
       res.status(500).json({ error: 'Failed to update profile', details: err.message });

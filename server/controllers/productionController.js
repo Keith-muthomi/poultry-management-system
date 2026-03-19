@@ -1,40 +1,75 @@
 const ProductionModel = require('../models/productionModel');
 
 const ProductionController = {
-  getProductionLogs: (req, res) => {
+  getAllProduction: (req, res) => {
+    const farmId = req.headers['x-farm-id'];
     try {
-      const logs = ProductionModel.getAll();
-      res.json(logs);
+      const records = ProductionModel.getAll(farmId);
+      res.json(records);
     } catch (err) {
-      res.status(500).json({ error: 'Failed to fetch logs', details: err.message });
+      res.status(500).json({ error: 'Failed to fetch production records', details: err.message });
     }
   },
 
   getTodayStats: (req, res) => {
+    const farmId = req.headers['x-farm-id'];
     try {
-      const stats = ProductionModel.getTodayStats();
-      res.json(stats);
+      const db = require('../db/database');
+      const stats = db.prepare(`
+        SELECT 
+          SUM(egg_count) as total_eggs,
+          SUM(mortality_count) as total_mortality,
+          SUM(feed_consumed_kg) as total_feed
+        FROM production 
+        WHERE date = DATE('now') AND farm_id = ?
+      `).get(farmId);
+      res.json(stats || { total_eggs: 0, total_mortality: 0, total_feed: 0 });
     } catch (err) {
-      res.status(500).json({ error: 'Failed to fetch stats', details: err.message });
+      res.status(500).json({ error: 'Failed to fetch today stats', details: err.message });
     }
   },
 
-  createLog: (req, res) => {
+  getProductionById: (req, res) => {
+    const farmId = req.headers['x-farm-id'];
     try {
-      const result = ProductionModel.create(req.body);
-      res.status(201).json({ id: result.lastInsertRowid, message: 'Production log recorded' });
+      const record = ProductionModel.getById(req.params.id, farmId);
+      if (!record) return res.status(404).json({ error: 'Record not found' });
+      res.json(record);
     } catch (err) {
-      res.status(400).json({ error: 'Failed to record log', details: err.message });
+      res.status(500).json({ error: 'Failed to fetch production record', details: err.message });
     }
   },
 
-  deleteLog: (req, res) => {
+  createProduction: (req, res) => {
+    const farmId = req.headers['x-farm-id'];
+    const userId = req.headers['x-user-id'];
     try {
-      const result = ProductionModel.delete(req.params.id);
-      if (result.changes === 0) return res.status(404).json({ error: 'Log not found' });
-      res.json({ message: 'Log deleted successfully' });
+      const result = ProductionModel.create({ ...req.body, user_id: userId }, farmId);
+      res.status(201).json({ id: result.lastInsertRowid, message: 'Production record created successfully' });
     } catch (err) {
-      res.status(500).json({ error: 'Failed to delete log', details: err.message });
+      res.status(400).json({ error: 'Failed to create production record', details: err.message });
+    }
+  },
+
+  updateProduction: (req, res) => {
+    const farmId = req.headers['x-farm-id'];
+    try {
+      const result = ProductionModel.update(req.params.id, req.body, farmId);
+      if (result.changes === 0) return res.status(404).json({ error: 'Record not found or unauthorized' });
+      res.json({ message: 'Production record updated successfully' });
+    } catch (err) {
+      res.status(400).json({ error: 'Failed to update production record', details: err.message });
+    }
+  },
+
+  deleteProduction: (req, res) => {
+    const farmId = req.headers['x-farm-id'];
+    try {
+      const result = ProductionModel.delete(req.params.id, farmId);
+      if (result.changes === 0) return res.status(404).json({ error: 'Record not found or unauthorized' });
+      res.json({ message: 'Production record deleted successfully' });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to delete production record', details: err.message });
     }
   }
 };

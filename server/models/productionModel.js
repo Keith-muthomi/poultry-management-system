@@ -1,41 +1,45 @@
 const db = require('../db/database');
 
 const ProductionModel = {
-  getAll: () => {
+  getAll: (farmId) => {
     return db.prepare(`
-      SELECT p.*, f.name as flock_name, f.type as flock_type 
+      SELECT p.*, f.name as flock_name, f.type as flock_type
       FROM production p
       JOIN flocks f ON p.flock_id = f.id
+      WHERE p.farm_id = ?
       ORDER BY p.date DESC
-    `).all();
+    `).all(farmId);
   },
 
-  getTodayStats: () => {
-    return db.prepare(`
-      SELECT 
-        SUM(egg_count) as total_eggs,
-        SUM(mortality_count) as total_mortality,
-        SUM(feed_consumed_kg) as total_feed
-      FROM production 
-      WHERE date = DATE('now')
-    `).get();
+  getById: (id, farmId) => {
+    return db.prepare('SELECT * FROM production WHERE id = ? AND farm_id = ?').get(id, farmId);
   },
 
-  getByFlockId: (flockId) => {
-    return db.prepare('SELECT * FROM production WHERE flock_id = ? ORDER BY date DESC').all(flockId);
+  getByFlock: (flockId, farmId) => {
+    return db.prepare('SELECT * FROM production WHERE flock_id = ? AND farm_id = ? ORDER BY date DESC').all(flockId, farmId);
   },
 
-  create: (data) => {
-    const { flock_id, egg_count, cracked_count, mortality_count, feed_consumed_kg, notes } = data;
+  create: (data, farmId) => {
+    const { flock_id, date, egg_count, cracked_count, mortality_count, feed_consumed_kg, notes, user_id } = data;
     const stmt = db.prepare(`
-      INSERT INTO production (flock_id, egg_count, cracked_count, mortality_count, feed_consumed_kg, notes)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO production (flock_id, date, egg_count, cracked_count, mortality_count, feed_consumed_kg, notes, farm_id, user_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
-    return stmt.run(flock_id, egg_count, cracked_count, mortality_count, feed_consumed_kg, notes);
+    return stmt.run(flock_id, date, egg_count, cracked_count, mortality_count, feed_consumed_kg, notes, farmId, user_id);
   },
 
-  delete: (id) => {
-    return db.prepare('DELETE FROM production WHERE id = ?').run(id);
+  update: (id, data, farmId) => {
+    const { date, egg_count, cracked_count, mortality_count, feed_consumed_kg, notes } = data;
+    const stmt = db.prepare(`
+      UPDATE production 
+      SET date = ?, egg_count = ?, cracked_count = ?, mortality_count = ?, feed_consumed_kg = ?, notes = ?
+      WHERE id = ? AND farm_id = ?
+    `);
+    return stmt.run(date, egg_count, cracked_count, mortality_count, feed_consumed_kg, notes, id, farmId);
+  },
+
+  delete: (id, farmId) => {
+    return db.prepare('DELETE FROM production WHERE id = ? AND farm_id = ?').run(id, farmId);
   }
 };
 

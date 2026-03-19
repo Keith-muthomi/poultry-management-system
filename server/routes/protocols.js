@@ -4,6 +4,7 @@ const ProtocolController = require('../controllers/protocolController');
 
 router.get('/', ProtocolController.getProtocols);
 router.post('/', ProtocolController.createProtocol);
+router.put('/:id', ProtocolController.updateProtocol);
 router.delete('/:id', ProtocolController.deleteProtocol);
 
 module.exports = router;

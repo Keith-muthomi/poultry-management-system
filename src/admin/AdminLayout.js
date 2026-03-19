@@ -44,7 +44,7 @@ export class AdminLayout extends LitElement {
         </admin-side-nav>
 <div class="flex flex-col flex-1 min-w-0 overflow-hidden relative">
   <!-- Admin Top Bar -->
-  <header class="h-14 bg-white dark:bg-neutral-900 text-neutral-900 dark:text-white border-b border-neutral-200/15 dark:border-white/5 flex items-center justify-between px-6 shrink-0 z-10 sticky top-0 transition-colors duration-300">
+  <header class="h-14 bg-neutral-100 dark:bg-neutral-900 text-neutral-900 dark:text-white border-b border-neutral-200/15 dark:border-white/5 flex items-center justify-between px-6 shrink-0 z-10 sticky top-0 transition-colors duration-300">
     <div class="flex items-center gap-4">
       <button 
         @click=${() => this.isMobileMenuOpen = !this.isMobileMenuOpen}
@@ -74,7 +74,7 @@ export class AdminLayout extends LitElement {
     </div>
   </header>
 
-          <main class="flex-1 overflow-y-auto p-4 md:p-6 bg-neutral-100 dark:bg-neutral-950/50">
+          <main class="flex-1 overflow-y-auto p-4 md:p-6">
             <div class="max-w-[1600px] mx-auto">
                 <router-view></router-view>
             </div>

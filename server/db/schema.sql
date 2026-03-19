@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- Flocks Table
 CREATE TABLE IF NOT EXISTS flocks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
   name TEXT NOT NULL,
   type TEXT CHECK(type IN ('Layers', 'Broilers')) NOT NULL,
   breed TEXT,
@@ -22,12 +23,14 @@ CREATE TABLE IF NOT EXISTS flocks (
   hatch_date DATE,
   pen_id TEXT,
   status TEXT DEFAULT 'Active' CHECK(status IN ('Active', 'Sold', 'Culled')),
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 -- Daily Production Table (Eggs, etc.)
 CREATE TABLE IF NOT EXISTS production (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
   flock_id INTEGER,
   date DATE DEFAULT (DATE('now')),
   egg_count INTEGER DEFAULT 0,
@@ -35,29 +38,34 @@ CREATE TABLE IF NOT EXISTS production (
   mortality_count INTEGER DEFAULT 0,
   feed_consumed_kg REAL DEFAULT 0,
   notes TEXT,
-  FOREIGN KEY (flock_id) REFERENCES flocks (id)
+  FOREIGN KEY (flock_id) REFERENCES flocks (id),
+  FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 -- Supplies Table
 CREATE TABLE IF NOT EXISTS supplies (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
   name TEXT NOT NULL,
   category TEXT NOT NULL,
   quantity REAL DEFAULT 0,
   unit TEXT,
   min_threshold REAL DEFAULT 0,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 -- Finance Table (Sales, Expenses, Revenue)
 CREATE TABLE IF NOT EXISTS finance (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
   type TEXT CHECK(type IN ('Sale', 'Expense')) NOT NULL,
   category TEXT NOT NULL,
   amount REAL NOT NULL,
   description TEXT,
   date DATE DEFAULT (DATE('now')),
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 -- Mock Data for Supplies
@@ -77,11 +85,13 @@ WHERE NOT EXISTS (SELECT 1 FROM finance WHERE description = 'Sold 100 trays of e
 -- Protocols Table
 CREATE TABLE IF NOT EXISTS protocols (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
   title TEXT NOT NULL,
   time TEXT,
   location TEXT,
   status TEXT DEFAULT 'Pending' CHECK(status IN ('Pending', 'Completed', 'Next Up')),
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 -- Mock Data for Protocols

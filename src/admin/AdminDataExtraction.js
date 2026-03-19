@@ -36,8 +36,8 @@ export class AdminDataExtraction extends BasePage {
             <p class="text-neutral-500 text-[14px]">Extract all relational data including Users, Flocks, Production, and Finance records into a single portable JSON file.</p>
           </div>
           
-          <div class="p-4 bg-primary-600/5 dark:bg-primary-600/10 border border-primary-500/20 rounded-md-lg mb-8">
-            <p class="text-primary-700 dark:text-primary-400 text-[13px] flex items-center gap-2">
+          <div class="p-4 bg-error-600/5 dark:bg-error-600/10 border border-error-500/20 rounded-md-lg mb-8">
+            <p class="text-error-700 dark:text-error-400 text-[13px] flex items-center gap-2">
               <span class="material-symbols-rounded text-[18px]">info</span>
               This operation includes sensitive system data. Ensure the exported file is handled securely.
             </p>

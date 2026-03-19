@@ -1,13 +1,64 @@
 const RecordsModel = require('../models/recordsModel');
 
 const RecordsController = {
-  getTableRecords: (req, res) => {
+  getSupplies: (req, res) => {
+    const farmId = req.headers['x-farm-id'];
     try {
-      const { table } = req.params;
-      const records = RecordsModel.getTableData(table);
+      const supplies = RecordsModel.getAllSupplies(farmId);
+      res.json(supplies);
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to fetch supplies', details: err.message });
+    }
+  },
+
+  createSupply: (req, res) => {
+    const farmId = req.headers['x-farm-id'];
+    const userId = req.headers['x-user-id'];
+    try {
+      const result = RecordsModel.createSupply({ ...req.body, user_id: userId }, farmId);
+      res.status(201).json({ id: result.lastInsertRowid, message: 'Supply record created' });
+    } catch (err) {
+      res.status(400).json({ error: 'Failed to create supply record', details: err.message });
+    }
+  },
+
+  updateSupply: (req, res) => {
+    const farmId = req.headers['x-farm-id'];
+    try {
+      const result = RecordsModel.updateSupply(req.params.id, req.body, farmId);
+      if (result.changes === 0) return res.status(404).json({ error: 'Supply not found or unauthorized' });
+      res.json({ message: 'Supply updated' });
+    } catch (err) {
+      res.status(400).json({ error: 'Failed to update supply record', details: err.message });
+    }
+  },
+
+  deleteSupply: (req, res) => {
+    const farmId = req.headers['x-farm-id'];
+    try {
+      const result = RecordsModel.deleteSupply(req.params.id, farmId);
+      if (result.changes === 0) return res.status(404).json({ error: 'Supply not found or unauthorized' });
+      res.json({ message: 'Supply deleted' });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to delete supply record', details: err.message });
+    }
+  },
+
+  getTableRecords: (req, res) => {
+    const farmId = req.headers['x-farm-id'];
+    const { table } = req.params;
+    const allowedTables = ['flocks', 'production', 'finance', 'supplies', 'protocols'];
+    
+    if (!allowedTables.includes(table)) {
+      return res.status(400).json({ error: 'Invalid table requested' });
+    }
+
+    try {
+      const db = require('../db/database');
+      const records = db.prepare(`SELECT * FROM ${table} WHERE farm_id = ?`).all(farmId);
       res.json(records);
     } catch (err) {
-      res.status(500).json({ error: `Failed to fetch records for ${req.params.table}`, details: err.message });
+      res.status(500).json({ error: `Failed to fetch records from ${table}`, details: err.message });
     }
   }
 };
