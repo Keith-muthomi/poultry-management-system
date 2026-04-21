@@ -1,6 +1,7 @@
 const db = require('../db/database');
 
 const AuthController = {
+  // Let people sign in if they have the right email and password
   login: (req, res) => {
     const { email, password } = req.body;
     try {
@@ -9,7 +10,7 @@ const AuthController = {
         if (user.status === 'Suspended') {
           return res.status(403).json({ error: 'Your account has been suspended. Please contact the administrator.' });
         }
-        // Return user without password
+        // Give them the user info but keep the password secret
         const { password, secondary_password, ...userWithoutPassword } = user;
         res.json({ user: userWithoutPassword, message: 'Login successful' });
       } else {
@@ -20,6 +21,7 @@ const AuthController = {
     }
   },
 
+  // Check if the admin knows their second password for extra safety
   verifyAdminSecondary: (req, res) => {
     const { id, secondaryPassword } = req.body;
     try {
@@ -34,6 +36,7 @@ const AuthController = {
     }
   },
 
+  // Add a new user to the system. First one becomes the boss!
   register: (req, res) => {
     const { name, email, password } = req.body;
     try {
@@ -50,6 +53,7 @@ const AuthController = {
     }
   },
 
+  // Let someone change their name or email
   updateProfile: (req, res) => {
     const { id, name, email } = req.body;
     try {
@@ -62,6 +66,7 @@ const AuthController = {
     }
   },
 
+  // Change the secret password
   updatePassword: (req, res) => {
     const { id, currentPassword, newPassword } = req.body;
     try {

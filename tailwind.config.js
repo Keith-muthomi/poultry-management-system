@@ -11,7 +11,7 @@ module.exports = {
         200: "#bcd8ff",
         300: "#8ec0ff",
         400: "#599dff",
-        500: "#256eff", // Standard Brand Blue
+        500: "#256eff", // Our main blue color
         600: "#1b55f5",
         700: "#1441e1",
         800: "#1735b6",
@@ -194,4 +194,9 @@ module.exports = {
     },
   },
   plugins: [],
+}
+
+  plugins: [],
+}
+ns: [],
 }

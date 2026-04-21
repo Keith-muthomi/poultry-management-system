@@ -1,20 +1,21 @@
+// This is for managing our flocks of birds
 const express = require('express');
 const router = express.Router();
 const FlockController = require('../controllers/flockController');
 
-// GET /api/flocks - Get all flocks
+// Grab all the birds we have
 router.get('/', FlockController.getFlocks);
 
-// GET /api/flocks/:id - Get a specific flock
+// Get just one flock if you have its ID
 router.get('/:id', FlockController.getFlock);
 
-// POST /api/flocks - Create a new flock
+// Add some new birds to the farm
 router.post('/', FlockController.createFlock);
 
-// PUT /api/flocks/:id - Update a flock
+// Update info when things change for a flock
 router.put('/:id', FlockController.updateFlock);
 
-// DELETE /api/flocks/:id - Delete a flock
+// Delete a flock if it's not here anymore
 router.delete('/:id', FlockController.deleteFlock);
 
 module.exports = router;

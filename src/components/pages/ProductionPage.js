@@ -3,11 +3,12 @@ import { BasePage } from '../base/BasePage.js';
 import { ProductionService } from '../../services/ProductionService.js';
 import { FlockService } from '../../services/FlockService.js';
 
+// This page is where we keep track of how many eggs were laid and if any birds died
 export class ProductionPage extends BasePage {
 
   static properties = {
     ...BasePage.properties,
-    mode: { type: String },
+    mode: { type: String }, // either 'layers' or 'broilers'
     logs: { type: Array },
     flocks: { type: Array },
     isModalOpen: { type: Boolean },
@@ -24,6 +25,7 @@ export class ProductionPage extends BasePage {
     this.saving = false;
     this.toast = { open: false, message: '', type: 'info' };
 
+    // Tables for layers (the ones that lay eggs)
     this.layerColumns = [
       { key: 'date', label: 'Cycle Date', render: (val) => new Date(val).toLocaleDateString() },
       { key: 'flock_name', label: 'Asset Unit' },
@@ -33,6 +35,7 @@ export class ProductionPage extends BasePage {
       { key: 'feed_consumed_kg', label: 'Resource (kg)' },
     ];
 
+    // Tables for broilers (the ones for meat)
     this.broilerColumns = [
       { key: 'date', label: 'Cycle Date', render: (val) => new Date(val).toLocaleDateString() },
       { key: 'flock_name', label: 'Asset Unit' },
@@ -47,6 +50,7 @@ export class ProductionPage extends BasePage {
     await this.fetchData();
   }
 
+  // Go grab all the production logs and flock info from the server
   async fetchData() {
     this.loading = true;
     try {
@@ -75,12 +79,13 @@ export class ProductionPage extends BasePage {
     this.isModalOpen = false;
   }
 
+  // Save the new production log
   async handleSave(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
     
-    // Numeric conversion
+    // Convert strings to numbers so the database doesn't complain
     data.flock_id = parseInt(data.flock_id);
     data.egg_count = parseInt(data.egg_count || 0);
     data.cracked_count = parseInt(data.cracked_count || 0);
@@ -100,6 +105,7 @@ export class ProductionPage extends BasePage {
     }
   }
 
+  // Delete a log entry, but ask first!
   async handleDelete(row) {
     if (confirm('Authorize deletion of this operational log?')) {
       try {
@@ -112,6 +118,7 @@ export class ProductionPage extends BasePage {
     }
   }
 
+  // Calculate the totals for the top cards based on the selected mode
   renderStats() {
     const filteredLogs = this.logs.filter(l => l.flock_type.toLowerCase() === this.mode);
     const totalEggs = filteredLogs.reduce((sum, l) => sum + (l.egg_count || 0), 0);

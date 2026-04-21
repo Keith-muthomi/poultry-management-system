@@ -1,6 +1,6 @@
--- Poultry Management System Schema
+-- This is the big list of all our tables
 
--- Users Table
+-- Where we keep track of people
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name TEXT NOT NULL,
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Flocks Table
+-- Where we keep track of our birds
 CREATE TABLE IF NOT EXISTS flocks (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS flocks (
   FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
--- Daily Production Table (Eggs, etc.)
+-- Where we write down how many eggs we got today
 CREATE TABLE IF NOT EXISTS production (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS production (
   FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
--- Supplies Table
+-- Where we keep track of our stuff
 CREATE TABLE IF NOT EXISTS supplies (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS supplies (
   FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
--- Finance Table (Sales, Expenses, Revenue)
+-- Money coming in and going out
 CREATE TABLE IF NOT EXISTS finance (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS finance (
   FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
--- Mock Data for Supplies
+-- Some fake stuff for testing supplies
 INSERT INTO supplies (name, category, quantity, unit, min_threshold)
 SELECT 'Starter Feed', 'Feed', 500, 'kg', 100
 WHERE NOT EXISTS (SELECT 1 FROM supplies WHERE name = 'Starter Feed');
@@ -77,12 +77,12 @@ INSERT INTO supplies (name, category, quantity, unit, min_threshold)
 SELECT 'Newcastle Vaccine', 'Medicine', 50, 'vials', 10
 WHERE NOT EXISTS (SELECT 1 FROM supplies WHERE name = 'Newcastle Vaccine');
 
--- Mock Data for Finance
+-- Some fake stuff for testing money
 INSERT INTO finance (type, category, amount, description, date)
 SELECT 'Sale', 'Eggs', 1200, 'Sold 100 trays of eggs', '2024-03-10'
 WHERE NOT EXISTS (SELECT 1 FROM finance WHERE description = 'Sold 100 trays of eggs');
 
--- Protocols Table
+-- Things we need to do
 CREATE TABLE IF NOT EXISTS protocols (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   user_id INTEGER NOT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS protocols (
   FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
--- Mock Data for Protocols
+-- Some fake stuff for testing tasks
 INSERT INTO protocols (title, time, location, status)
 SELECT 'Morning Vaccination', '08:00 AM', 'Batch A-03', 'Completed'
 WHERE NOT EXISTS (SELECT 1 FROM protocols WHERE title = 'Morning Vaccination');
@@ -103,7 +103,7 @@ INSERT INTO protocols (title, time, location, status)
 SELECT 'Feed Refill', '02:00 PM', 'All Pens', 'Next Up'
 WHERE NOT EXISTS (SELECT 1 FROM protocols WHERE title = 'Feed Refill');
 
--- Mock Data for Users
+-- Some fake people to test logging in
 INSERT INTO users (name, email, password, role, status)
 SELECT 'System Admin', 'admin@poultrydocs.com', 'admin123', 'Admin', 'Active'
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'admin@poultrydocs.com');

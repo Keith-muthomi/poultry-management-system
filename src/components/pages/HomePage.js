@@ -19,12 +19,13 @@ import {
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, Title, CategoryScale, Tooltip, Legend, Filler);
 
+// This is the main dashboard where the farmer sees everything at a glance
 export class HomePage extends BasePage {
   static properties = {
     ...BasePage.properties,
     stats: { type: Object },
     user: { type: Object },
-    protocols: { type: Array },
+    protocols: { type: Array }, // list of things to do today
     isModalOpen: { type: Boolean },
     saving: { type: Boolean },
     toast: { type: Object }
@@ -43,10 +44,12 @@ export class HomePage extends BasePage {
 
   async connectedCallback() {
     super.connectedCallback();
+    // Get all the data we need when the page loads
     await Promise.all([this.fetchOverview(), this.fetchProtocols()]);
   }
 
   disconnectedCallback() {
+    // Clean up the chart so it doesn't cause memory leaks
     if (this.chart) {
       this.chart.destroy();
       this.chart = null;
@@ -58,6 +61,7 @@ export class HomePage extends BasePage {
     this.initChart();
   }
 
+  // Load the quick stats for the top cards
   async fetchOverview() {
     try {
       const [flocks, prodStats] = await Promise.all([
@@ -76,6 +80,7 @@ export class HomePage extends BasePage {
     }
   }
 
+  // Get the list of active protocols (tasks)
   async fetchProtocols() {
     try {
       this.protocols = await ProtocolService.getProtocols();
@@ -84,6 +89,7 @@ export class HomePage extends BasePage {
     }
   }
 
+  // Set up the pretty line chart for egg production
   initChart() {
     const ctx = this.querySelector('#productionChart')?.getContext('2d');
     if (!ctx) return;
@@ -141,6 +147,7 @@ export class HomePage extends BasePage {
     this.toast = { open: true, message, type };
   }
 
+  // Save a new protocol to the database
   async handleSaveProtocol(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -158,6 +165,7 @@ export class HomePage extends BasePage {
     }
   }
 
+  // Delete a protocol when it's done or not needed
   async handleDeleteProtocol(id) {
     if (confirm('Remove this protocol?')) {
       try {

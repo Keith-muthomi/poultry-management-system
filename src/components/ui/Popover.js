@@ -1,13 +1,11 @@
 import { LitElement, html, css } from 'lit';
 
-/**
- * A semantic, accessible popover component with edge detection and dynamic positioning.
- */
+// This is a little box that pops up when you click something
 export class Popover extends LitElement {
   static properties = {
     open: { type: Boolean, reflect: true },
     anchorId: { type: String },
-    placement: { type: String }, // 'bottom-end', 'bottom-start', 'top-end', 'top-start'
+    placement: { type: String }, // where should it go? (top, bottom, etc.)
     width: { type: String },
     height: { type: String },
     transformOrigin: { type: String }
@@ -23,6 +21,7 @@ export class Popover extends LitElement {
     this._position = { top: 0, left: 0 };
     
     this._handleOutsideClick = (e) => {
+      // Close the box if we click anywhere else on the screen
       if (this.open && !e.composedPath().includes(this)) {
         this.open = false;
         this.dispatchEvent(new CustomEvent('popover-close'));
@@ -44,7 +43,7 @@ export class Popover extends LitElement {
 
   updated(changedProperties) {
     if (changedProperties.has('open') && this.open) {
-      // Small delay to ensure anchor is rendered and available
+      // Give it a tiny bit of time to make sure everything is ready
       setTimeout(() => this._updatePosition(), 0);
     }
   }
@@ -52,6 +51,7 @@ export class Popover extends LitElement {
   _updatePosition() {
     if (!this.open) return;
 
+    // Find the button or thing that opened this popover
     const anchor = document.getElementById(this.anchorId) || 
                    (this.parentElement?.shadowRoot?.getElementById(this.anchorId)) ||
                    document.querySelector(`#${this.anchorId}`);
@@ -67,7 +67,7 @@ export class Popover extends LitElement {
     let left = 0;
     let finalPlacement = this.placement;
 
-    // Initial positioning based on placement
+    // Figure out where to put the box
     if (this.placement.startsWith('bottom')) {
       top = anchorRect.bottom + 8;
     } else {
@@ -80,8 +80,8 @@ export class Popover extends LitElement {
       left = anchorRect.left;
     }
 
-    // EDGE DETECTION & DYNAMIC SHIFTING
-    // Vertical check
+    // Try to keep the box on the screen so it doesn't get cut off
+    // Checking the top and bottom
     if (top + popoverRect.height > viewportHeight) {
       top = anchorRect.top - popoverRect.height - 8;
       finalPlacement = finalPlacement.replace('bottom', 'top');
@@ -90,7 +90,7 @@ export class Popover extends LitElement {
       finalPlacement = finalPlacement.replace('top', 'bottom');
     }
 
-    // Horizontal check
+    // Checking the left and right
     if (left + popoverRect.width > viewportWidth) {
       left = viewportWidth - popoverRect.width - 16;
     } else if (left < 0) {
@@ -163,7 +163,7 @@ export class Popover extends LitElement {
       }
     }
     
-    /* Global class forced dark mode support */
+    /* Make sure it looks good in dark mode too */
     :host-context(.dark) .popover-content {
         background: #191919;
         border-color: rgba(255,255,255,0.1);

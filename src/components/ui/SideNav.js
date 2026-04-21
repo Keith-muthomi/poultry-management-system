@@ -24,8 +24,20 @@ export class SideNav extends LitElement {
     return this.currentPath.startsWith(path);
   }
 
-  navItem(path, label, icon) {
+  navItem(path, label, icon, isMobile = false) {
     const active = this.isActive(path);
+    if (isMobile) {
+      return html`
+        <a href=${path} data-link
+          class="flex flex-col items-center justify-center flex-1 gap-1 py-2 transition-all duration-200
+          ${active 
+            ? 'text-primary-600 dark:text-primary-500' 
+            : 'text-neutral-500 dark:text-neutral-400'}">
+          <span class="material-symbols-rounded text-[24px] leading-none">${icon}</span>
+          <span class="text-[10px] font-medium">${label}</span>
+        </a>
+      `;
+    }
     return html`
       <a href=${path} data-link
         class="flex items-center gap-3 px-4 py-3 rounded-md-full text-[14px] transition-all duration-200 group mx-3 mb-1
@@ -48,17 +60,22 @@ export class SideNav extends LitElement {
   }
 
   render() {
-    return html`
-      <!-- Backdrop -->
-      <div 
-        @click=${() => this.dispatchEvent(new CustomEvent('toggle-menu'))}
-        class="fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 md:hidden ${this.mobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}">
-      </div>
+    const isAdmin = AuthService.getUser()?.role === 'Admin';
 
-      <aside class="fixed inset-y-0 left-0 z-50 flex flex-col h-screen bg-neutral-100 dark:bg-neutral-900 border-r border-neutral-200/10 dark:border-neutral-800/20 transition-all duration-300 transform 
-        ${this.mobileOpen ? 'translate-x-0' : '-translate-x-full'} 
-        md:translate-x-0 md:relative 
-        ${this.collapsed ? 'md:w-20' : 'md:w-72'} w-72">
+    return html`
+      <!-- Mobile Bottom Navigation -->
+      <nav class="fixed bottom-0 left-0 right-0 h-16 bg-neutral-100 dark:bg-neutral-900 border-t border-neutral-200/15 dark:border-neutral-800/30 flex items-center justify-around z-50 md:hidden px-2 shadow-lg">
+        ${this.navItem('/', 'Home', 'dashboard', true)}
+        ${this.navItem('/production', 'Prod', 'egg', true)}
+        ${this.navItem('/flock', 'Flocks', 'inventory', true)}
+        ${this.navItem('/records', 'Records', 'analytics', true)}
+        ${this.navItem('/finance', 'Finance', 'payments', true)}
+      </nav>
+
+      <!-- Desktop Sidebar -->
+      <aside class="hidden md:flex fixed inset-y-0 left-0 z-50 flex-col h-screen bg-neutral-100 dark:bg-neutral-900 border-r border-neutral-200/10 dark:border-neutral-800/20 transition-all duration-300 transform 
+        md:relative 
+        ${this.collapsed ? 'md:w-20' : 'md:w-72'}">
 
         <!-- Logo -->
         <div class="flex items-center gap-4 px-6 h-14 border-b border-neutral-200/5 dark:border-neutral-800/10 mb-4">

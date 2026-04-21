@@ -1,3 +1,4 @@
+// All the routes for tracking money coming in and going out
 const express = require('express');
 const router = express.Router();
 const FinanceController = require('../controllers/financeController');

@@ -11,7 +11,7 @@ tables.forEach(table => {
   }
 });
 
-// For existing mock data, let's assign them to the first user (System Admin usually)
-// System Admin ID is 1
+// Give all the old data to the first user since we need someone to own it
+// The boss user usually has ID 1
 console.log('Migration complete');
 process.exit(0);

@@ -1,3 +1,4 @@
+// Everything to do with logging in and making sure users are who they say they are
 const express = require('express');
 const router = express.Router();
 const AuthController = require('../controllers/authController');

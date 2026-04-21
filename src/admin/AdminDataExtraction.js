@@ -2,6 +2,8 @@ import { html } from 'lit';
 import { BasePage } from '../components/base/BasePage.js';
 import { AdminService } from '../services/AdminService.js';
 
+// This page lets admins download all the system data as a JSON file.
+// Good for backups or if we need to move the data somewhere else.
 export class AdminDataExtraction extends BasePage {
   static properties = {
     ...BasePage.properties,
@@ -13,6 +15,7 @@ export class AdminDataExtraction extends BasePage {
     this.toast = { open: false, message: '', type: 'info' };
   }
 
+  // Handles the export button click. It calls the service and shows a toast if it worked or failed.
   async handleExport() {
     try {
       await AdminService.exportData();

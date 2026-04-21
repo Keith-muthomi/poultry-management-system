@@ -2,6 +2,8 @@ import { html } from 'lit';
 import { BasePage } from '../components/base/BasePage.js';
 import { AdminService } from '../services/AdminService.js';
 
+// This is where the magic happens for the admin users. 
+// We list everyone, check their status, and can even kick them out if needed.
 export class AdminDashboard extends BasePage {
   static properties = {
     ...BasePage.properties,
@@ -14,6 +16,7 @@ export class AdminDashboard extends BasePage {
     this.users = [];
     this.toast = { open: false, message: '', type: 'info' };
 
+    // Setting up the table columns. The render parts make the roles and status look pretty with badges.
     this.columns = [
       { key: 'name', label: 'Name' },
       { key: 'email', label: 'Email' },
@@ -38,6 +41,7 @@ export class AdminDashboard extends BasePage {
       { key: 'created_at', label: 'Joined', render: (val) => new Date(val).toLocaleDateString() }
     ];
 
+    // Actions we can take on each user. Toggling status or deleting them entirely.
     this.actions = [
       { 
         icon: (row) => row.status === 'Active' ? 'block' : 'check_circle', 
@@ -48,11 +52,13 @@ export class AdminDashboard extends BasePage {
     ];
   }
 
+  // When the component lands on the page, we go grab all the users.
   async connectedCallback() {
     super.connectedCallback();
     await this.fetchUsers();
   }
 
+  // Gets the user list from our admin service. If it fails, we show a little error.
   async fetchUsers() {
     this.loading = true;
     try {
@@ -64,10 +70,12 @@ export class AdminDashboard extends BasePage {
     }
   }
 
+  // Helper to show those little notification toasts.
   showToast(message, type = 'info') {
     this.toast = { open: true, message, type };
   }
 
+  // Swaps a user between Active and Suspended. Super handy.
   async toggleUserStatus(row) {
     const newStatus = row.status === 'Active' ? 'Suspended' : 'Active';
     try {
@@ -79,6 +87,7 @@ export class AdminDashboard extends BasePage {
     }
   }
 
+  // Deletes a user. We ask for confirmation first because this is permanent!
   async handleDelete(row) {
     if (confirm(`Are you sure you want to permanently delete user ${row.name}?`)) {
       try {
@@ -91,6 +100,7 @@ export class AdminDashboard extends BasePage {
     }
   }
 
+  // Rendering the main dashboard content.
   renderContent() {
     const activeUsers = this.users.filter(u => u.status === 'Active').length;
     const suspendedUsers = this.users.filter(u => u.status === 'Suspended').length;

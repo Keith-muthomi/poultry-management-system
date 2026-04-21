@@ -1,6 +1,8 @@
 import { html } from 'lit';
 import { BasePage } from '../components/base/BasePage.js';
 
+// This is where we'd see system errors and logs. 
+// Right now it just shows that everything is running smoothly.
 export class AdminReports extends BasePage {
   renderContent() {
     return html`
@@ -10,6 +12,7 @@ export class AdminReports extends BasePage {
           <p class="text-neutral-500 text-[12px] font-medium uppercase tracking-wider">System Logs / Error Tracking</p>
         </div>
 
+        <!-- Big status card. If nothing's wrong, we show a nice checkmark. -->
         <div class="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-white/5 rounded-md-lg p-8 flex flex-col items-center justify-center text-center min-h-[400px]">
           <div class="w-16 h-16 rounded-md-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center mb-4">
             <span class="material-symbols-rounded text-neutral-400 dark:text-neutral-500 text-[32px]">fact_check</span>

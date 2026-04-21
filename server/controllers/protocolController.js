@@ -1,6 +1,7 @@
 const ProtocolModel = require('../models/protocolModel');
 
 const ProtocolController = {
+  // Get the list of all the tasks and rules we need to follow
   getProtocols: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -11,6 +12,7 @@ const ProtocolController = {
     }
   },
 
+  // Add a new task to our to-do list
   createProtocol: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     const userId = req.headers['x-user-id'];
@@ -22,6 +24,7 @@ const ProtocolController = {
     }
   },
 
+  // Change something about a task, like if it's done or not
   updateProtocol: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -33,6 +36,7 @@ const ProtocolController = {
     }
   },
 
+  // Remove a task from the list
   deleteProtocol: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {

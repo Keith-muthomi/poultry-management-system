@@ -1,3 +1,4 @@
+// This is where we keep track of all our birds and how they're doing
 const db = require('../db/database');
 
 const FlockModel = {

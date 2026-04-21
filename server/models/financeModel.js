@@ -1,3 +1,4 @@
+// This one handles all the money stuff like sales and expenses
 const db = require('../db/database');
 
 const FinanceModel = {

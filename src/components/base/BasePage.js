@@ -1,6 +1,8 @@
 import { LitElement, html } from 'lit';
 
+// A base class for full pages. It's pretty similar to BaseComponent but for whole screens.
 export class BasePage extends LitElement {
+  // Again, no Shadow DOM so Tailwind works fine.
   createRenderRoot() {
     return this;
   }
@@ -16,6 +18,7 @@ export class BasePage extends LitElement {
     this.error = null;
   }
 
+  // A nice full-page loading state.
   renderLoading() {
     return html`
       <div class="flex flex-col items-center justify-center p-12 gap-4 w-full h-full">
@@ -25,6 +28,7 @@ export class BasePage extends LitElement {
     `;
   }
 
+  // Full-page error message for when things go south.
   renderError() {
     return html`
       <div class="p-6 bg-error-100/50 text-error-700 dark:text-error-300 rounded-md-md border border-error-200/20 animate-in fade-in duration-300">
@@ -36,10 +40,12 @@ export class BasePage extends LitElement {
     `;
   }
 
+  // Subclasses will override this to show their actual content.
   renderContent() {
     return html``;
   }
 
+  // Decides what to show: the loader, the error, or the page content.
   render() {
     if (this.loading) return this.renderLoading();
     if (this.error) return this.renderError();

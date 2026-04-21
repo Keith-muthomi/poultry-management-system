@@ -1,4 +1,4 @@
-// server/index.js
+// This is the main file for our server
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
@@ -14,12 +14,12 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const distPath = path.join(__dirname, '../dist');
 
-// Middleware
+// Setting up the tools we need
 app.use(cors());
-app.use(express.json()); // Essential for parsing JSON bodies
+app.use(express.json()); // We need this so the server can read the data we send it
 app.use(express.static(distPath));
 
-// API Routes
+// Here are all our api paths
 app.use('/api/flocks', flockRoutes);
 app.use('/api/production', productionRoutes);
 app.use('/api/auth', authRoutes);
@@ -28,15 +28,15 @@ app.use('/api/records', recordsRoutes);
 app.use('/api/protocols', protocolRoutes);
 app.use('/api/admin', adminRoutes);
 
-// Example fallback/debug route
+// Just to check if the server is actually alive
 app.get('/api/health', (req, res) => {
   res.json({ status: "ok", message: "Server is running with modular routes!" });
 });
 
-// Serve static files from the Vite build folder (dist)
+// Show the files we built with Vite
 app.use(express.static(path.join(__dirname, '../dist')));
 
-// THE SPA FIX: Redirect all other requests to index.html
+// Send everything else to the home page so React/WebComponents can handle it
 app.get('/*path', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });

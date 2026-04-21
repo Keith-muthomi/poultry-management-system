@@ -1,3 +1,4 @@
+// Admin only! For managing users and getting data out of the system
 const express = require('express');
 const router = express.Router();
 const AdminController = require('../controllers/adminController');

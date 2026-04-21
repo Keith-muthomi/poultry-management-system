@@ -3,6 +3,7 @@ import { BasePage } from '../base/BasePage.js';
 import { RecordsService } from '../../services/RecordsService.js';
 import { jsPDF } from 'jspdf';
 
+// This page is for looking at all the data in the system
 export class RecordsPage extends BasePage {
   static properties = {
     ...BasePage.properties,
@@ -29,6 +30,7 @@ export class RecordsPage extends BasePage {
     await this.fetchData();
   }
 
+  // Go grab the data from the server
   async fetchData() {
     this.loading = true;
     try {
@@ -40,6 +42,7 @@ export class RecordsPage extends BasePage {
     }
   }
 
+  // When someone clicks a different table, we need to refresh the data
   async handleTableChange(tableId) {
     this.selectedTable = tableId;
     this.searchTerm = '';
@@ -50,17 +53,19 @@ export class RecordsPage extends BasePage {
     this.searchTerm = e.target.value.toLowerCase();
   }
 
+  // Turn the current table into a PDF file
   downloadPDF() {
-    const doc = new jsPDF({ orientation: 'landscape' }); // Landscape fits more columns
+    // Landscape mode fits more stuff on the page
+    const doc = new jsPDF({ orientation: 'landscape' }); 
     const filteredData = this.getFilteredData();
     const tableName = this.tables.find(t => t.id === this.selectedTable)?.label || 'Report';
 
-    // PDF Dimensions
+    // Figure out how big the page is
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 14;
     const availableWidth = pageWidth - (margin * 2);
 
-    // PDF Header
+    // Make the header look nice
     doc.setFontSize(20);
     doc.setTextColor(22, 163, 74); 
     doc.text('PoultryDocs Official Record', margin, 20);
@@ -74,7 +79,7 @@ export class RecordsPage extends BasePage {
       const keys = Object.keys(filteredData[0]);
       const colWidth = availableWidth / keys.length;
       
-      // Dynamic Font Size based on column count
+      // Make the text smaller if there are too many columns
       let fontSize = 9;
       if (keys.length > 8) fontSize = 7;
       if (keys.length > 12) fontSize = 6;
@@ -85,7 +90,7 @@ export class RecordsPage extends BasePage {
 
       let y = 42;
       
-      // Header
+      // Put the column names at the top
       keys.forEach((key, i) => {
         const x = margin + (i * colWidth);
         const label = key.replace(/_/g, ' ').toUpperCase();
@@ -96,9 +101,10 @@ export class RecordsPage extends BasePage {
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(60);
 
-      // Rows
+      // Add each row of data
       filteredData.forEach((row) => {
-        if (y > 185) { // Landscape page limit
+        // If we run out of space, start a new page
+        if (y > 185) { 
           doc.addPage();
           y = 20;
         }
@@ -107,7 +113,7 @@ export class RecordsPage extends BasePage {
           const x = margin + (i * colWidth);
           let val = String(row[key] || '');
           
-          // Truncate text if it's too long for the column
+          // Cut off the text if it's too long for the box
           const textWidth = doc.getTextWidth(val);
           if (textWidth > colWidth - 2) {
              val = doc.splitTextToSize(val, colWidth - 2)[0] + '...';
@@ -121,6 +127,7 @@ export class RecordsPage extends BasePage {
       doc.text('No records found.', margin, 42);
     }
 
+    // Save the file for the user
     doc.save(`PoultryDocs_${this.selectedTable}_Report.pdf`);
   }
 

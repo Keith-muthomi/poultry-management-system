@@ -1,4 +1,4 @@
-// Import Web Components so they are registered before the router tries to use them
+// Load up all our custom tags so they're ready when we need to show them
 import './components/layout/AppLayout.js';
 import './components/pages/HomePage.js';
 import './components/pages/AuthPage.js';
@@ -9,14 +9,14 @@ import './components/pages/RecordsPage.js';
 import './components/pages/FinancePage.js';
 import './components/pages/SettingsPage.js';
 
-// Admin Components
+// Stuff for the boss's side of things
 import './admin/AdminLayout.js';
 import './admin/AdminSideNav.js';
 import './admin/AdminDashboard.js';
 import './admin/AdminReports.js';
 import './admin/AdminDataExtraction.js';
 
-// UI Components
+// Little pieces of the interface we use everywhere
 import './components/ui/StatCard.js';
 import './components/ui/FlockCard.js';
 import './components/ui/Table.js';
@@ -27,6 +27,10 @@ import './components/ui/Popover.js';
 
 import 'material-symbols';
 import { AuthService } from './services/AuthService.js';
+import { registerSW } from 'virtual:pwa-register';
+
+// Set up the thing that makes the app work offline
+registerSW({ immediate: true });
 
 class ClientRouter {
     constructor(options = {}) {
@@ -68,7 +72,7 @@ class ClientRouter {
     async navigate(path, addToHistory = true) {
         const navId = ++this.navCounter;
         
-        // AUTH GUARD
+        // Check if they're allowed to be here
         if (!AuthService.isAuthenticated() && path !== '/auth') {
             path = '/auth';
             addToHistory = true;
@@ -124,7 +128,7 @@ export const router = new ClientRouter({
     targetId: 'app'
 });
 
-// Register application routes
+// Tell the router where each page goes
 router.registerRoute('/', 'home-page', true);
 router.registerRoute('/auth', 'auth-page', false);
 router.registerRoute('*', 'not-found-page', false);
@@ -134,7 +138,7 @@ router.registerRoute('/records', 'records-page', true);
 router.registerRoute('/finance', 'finance-page', true);
 router.registerRoute('/settings', 'settings-page', true);
 
-// Admin Routes
+// Pages just for the admin
 router.registerRoute('/admin', 'admin-dashboard', true);
 router.registerRoute('/admin/reports', 'admin-reports', true);
 router.registerRoute('/admin/data', 'admin-data-extraction', true);

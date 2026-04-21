@@ -2,13 +2,14 @@ import { LitElement, html } from 'lit';
 import { BasePage } from '../base/BasePage.js';
 import '../ui/Button.js';
 
+// Uh oh, the user went to a page that doesn't exist!
 export class NotFoundPage extends BasePage {
 
   render() {
     return html`
       <section class="relative flex min-h-[100vh] items-center justify-center overflow-hidden bg-neutral-100 dark:bg-neutral-900 px-6 transition-colors duration-300">
 
-        <!-- M3 Tonal background glows -->
+        <!-- Some pretty glowing blobs in the background -->
         <div class="absolute inset-0 opacity-10 dark:opacity-20 pointer-events-none">
           <div class="absolute w-96 h-96 bg-primary-500 dark:bg-primary-400 blur-[100px] rounded-md-full animate-pulse -top-20 -left-20"></div>
           <div class="absolute w-96 h-96 bg-tertiary-500 dark:bg-tertiary-400 blur-[100px] rounded-md-full animate-pulse bottom-0 right-0"></div>
@@ -47,6 +48,7 @@ export class NotFoundPage extends BasePage {
         </div>
 
         <style>
+          /* Make the 404 text bounce a little */
           @keyframes float {
             0% { transform: translateY(0px); }
             50% { transform: translateY(-20px); }

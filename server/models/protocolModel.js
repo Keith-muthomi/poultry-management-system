@@ -1,3 +1,4 @@
+// Just a simple way to manage our farm tasks and rules
 const db = require('../db/database');
 
 const ProtocolModel = {

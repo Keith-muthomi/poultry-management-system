@@ -1,13 +1,15 @@
 import { LitElement, html } from 'lit';
 
+// Our base component that everyone else inherits from. 
+// It handles the annoying stuff like loading spinners and error messages automatically.
 export class BaseComponent extends LitElement {
-  // Keeping this as requested for Tailwind support
+  // We're using Tailwind, so we don't want Shadow DOM getting in the way.
   createRenderRoot() { return this; }
 
   static properties = {
     loading: { type: Boolean },
     error: { type: String },
-    isEmpty: { type: Boolean }, // Added: For when data is []
+    isEmpty: { type: Boolean }, // For when there's just nothing to show.
   };
 
   constructor() {
@@ -17,10 +19,7 @@ export class BaseComponent extends LitElement {
     this.isEmpty = false;
   }
 
-  /**
-   * Helper to dispatch custom events with less boilerplate
-   * usage: this.emit('data-saved', { id: 123 });
-   */
+  // Easy way to send events up to parent components.
   emit(name, detail = {}) {
     this.dispatchEvent(new CustomEvent(name, {
       detail,
@@ -29,10 +28,7 @@ export class BaseComponent extends LitElement {
     }));
   }
 
-  /**
-   * Standardized Data Fetching wrapper
-   * Handles loading and error states automatically
-   */
+  // This is a life saver. Wrap any async call in this to get auto loading/error states.
   async task(promise) {
     this.loading = true;
     this.error = null;
@@ -47,6 +43,7 @@ export class BaseComponent extends LitElement {
     }
   }
 
+  // A simple loading spinner so users know we're working on it.
   renderLoading() {
     return html`
       <div class="flex flex-col items-center justify-center p-12 animate-pulse">
@@ -56,6 +53,7 @@ export class BaseComponent extends LitElement {
     `;
   }
 
+  // Shows a red error box if something goes wrong.
   renderError() {
     return html`
       <div class="m-4 p-4 bg-error-100/50 border border-error-200/20 text-error-700 dark:text-error-300 rounded-lg flex items-center gap-3">
@@ -66,6 +64,7 @@ export class BaseComponent extends LitElement {
     `;
   }
 
+  // When the data comes back empty, we show this little box.
   renderEmpty() {
     return html`
       <div class="flex flex-col items-center justify-center p-12 text-center">
@@ -75,10 +74,12 @@ export class BaseComponent extends LitElement {
     `;
   }
 
+  // This is where the actual component content goes.
   renderContent() {
     return html`<slot></slot>`;
   }
 
+  // The main render logic. It decides whether to show the loader, the error, or the content.
   render() {
     if (this.loading) return this.renderLoading();
     if (this.error) return this.renderError();

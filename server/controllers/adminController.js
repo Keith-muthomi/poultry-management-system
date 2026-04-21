@@ -1,6 +1,7 @@
 const db = require('../db/database');
 
 const AdminController = {
+  // Get everyone who is registered in the system
   getAllUsers: (req, res) => {
     try {
       const users = db.prepare('SELECT id, name, email, role, status, farm_id, created_at FROM users').all();
@@ -10,6 +11,7 @@ const AdminController = {
     }
   },
 
+  // Change if a user is active or suspended
   updateUserStatus: (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
@@ -22,6 +24,7 @@ const AdminController = {
     }
   },
 
+  // Kick a user out for good
   deleteUser: (req, res) => {
     const { id } = req.params;
     try {
@@ -33,6 +36,7 @@ const AdminController = {
     }
   },
 
+  // Grab absolutely everything in the database - useful for backups!
   getSystemData: (req, res) => {
     try {
       const data = {

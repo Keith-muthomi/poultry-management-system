@@ -1,6 +1,7 @@
 const FlockModel = require('../models/flockModel');
 
 const FlockController = {
+  // Get all the flocks of birds we have
   getFlocks: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -11,6 +12,7 @@ const FlockController = {
     }
   },
 
+  // Get info about one specific flock
   getFlock: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -22,9 +24,10 @@ const FlockController = {
     }
   },
 
+  // Add a new bunch of birds to our farm
   createFlock: (req, res) => {
     const farmId = req.headers['x-farm-id'];
-    const userId = req.headers['x-user-id']; // Optional but good practice
+    const userId = req.headers['x-user-id']; // We don't HAVE to have this, but it's nice to know who did it
     try {
       const result = FlockModel.create({ ...req.body, user_id: userId }, farmId);
       res.status(201).json({ id: result.lastInsertRowid, message: 'Flock created successfully' });
@@ -33,6 +36,7 @@ const FlockController = {
     }
   },
 
+  // Update info about a flock, like if some were sold
   updateFlock: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -44,6 +48,7 @@ const FlockController = {
     }
   },
 
+  // Remove a flock record from our database
   deleteFlock: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {

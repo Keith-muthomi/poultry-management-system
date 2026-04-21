@@ -2,6 +2,7 @@ import { html } from 'lit';
 import { BasePage } from '../base/BasePage.js';
 import { FinanceService } from '../../services/FinanceService.js';
 
+// This is where we track all the money coming in and going out.
 export class FinancePage extends BasePage {
   static properties = {
     ...BasePage.properties,
@@ -20,6 +21,7 @@ export class FinancePage extends BasePage {
     this.saving = false;
     this.toast = { open: false, message: '', type: 'info' };
 
+    // Setting up the table columns so we know what's what.
     this.columns = [
       { key: 'date', label: 'Date', render: (val) => new Date(val).toLocaleDateString() },
       { 
@@ -44,6 +46,7 @@ export class FinancePage extends BasePage {
       }
     ];
 
+    // These buttons let us edit or delete rows.
     this.actions = [
       { icon: 'edit', label: 'Edit', handler: (row) => this.handleEdit(row) },
       { icon: 'delete', label: 'Delete', handler: (row) => this.handleDelete(row) }

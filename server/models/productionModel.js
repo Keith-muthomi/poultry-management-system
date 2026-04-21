@@ -1,3 +1,4 @@
+// This tracks how many eggs the birds are laying every day
 const db = require('../db/database');
 
 const ProductionModel = {

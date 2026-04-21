@@ -1,6 +1,7 @@
 const FinanceModel = require('../models/financeModel');
 
 const FinanceController = {
+  // See all the money we've spent or earned
   getAllTransactions: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -11,6 +12,7 @@ const FinanceController = {
     }
   },
 
+  // Record a new sale or an expense
   createTransaction: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     const userId = req.headers['x-user-id'];
@@ -22,6 +24,7 @@ const FinanceController = {
     }
   },
 
+  // Fix a mistake in a transaction
   updateTransaction: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -33,6 +36,7 @@ const FinanceController = {
     }
   },
 
+  // Delete a transaction we don't need anymore
   deleteTransaction: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -44,6 +48,7 @@ const FinanceController = {
     }
   },
 
+  // Get a quick look at our total income and expenses
   getSummary: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {

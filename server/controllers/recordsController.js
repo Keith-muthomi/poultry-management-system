@@ -1,6 +1,7 @@
 const RecordsModel = require('../models/recordsModel');
 
 const RecordsController = {
+  // Check what supplies we have left (like feed and medicine)
   getSupplies: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -11,6 +12,7 @@ const RecordsController = {
     }
   },
 
+  // Record that we bought or got some new supplies
   createSupply: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     const userId = req.headers['x-user-id'];
@@ -22,6 +24,7 @@ const RecordsController = {
     }
   },
 
+  // Update how much of a supply we have left
   updateSupply: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -33,6 +36,7 @@ const RecordsController = {
     }
   },
 
+  // Throw away a supply record
   deleteSupply: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -44,6 +48,7 @@ const RecordsController = {
     }
   },
 
+  // A generic way to get records from any table - pretty handy!
   getTableRecords: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     const { table } = req.params;

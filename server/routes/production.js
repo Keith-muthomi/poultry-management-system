@@ -1,23 +1,24 @@
+// Keeping track of egg production and feed
 const express = require('express');
 const router = express.Router();
 const ProductionController = require('../controllers/productionController');
 
-// GET /api/production - Get all production logs
+// Let's see how many eggs we've been getting
 router.get('/', ProductionController.getAllProduction);
 
-// GET /api/production/today - Get today's overview stats
+// Quick check on today's egg count
 router.get('/today', ProductionController.getTodayStats);
 
-// GET /api/production/:id - Get specific log
+// Check out a single egg record
 router.get('/:id', ProductionController.getProductionById);
 
-// POST /api/production - Record new production log
+// Log the eggs for today
 router.post('/', ProductionController.createProduction);
 
-// PUT /api/production/:id - Update a log
+// Oops, fix a mistake in the records
 router.put('/:id', ProductionController.updateProduction);
 
-// DELETE /api/production/:id - Delete a log
+// Get rid of a record we don't want
 router.delete('/:id', ProductionController.deleteProduction);
 
 module.exports = router;

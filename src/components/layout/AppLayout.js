@@ -1,9 +1,11 @@
 import { LitElement, html } from 'lit';
 import { AuthService } from '../../services/AuthService.js';
+import { pwaService } from '../../services/PwaService.js';
 import '../ui/SideNav.js';
 import '../ui/ThemeToggle.js';
 import '../ui/Popover.js';
 
+// The main skeleton of our app. It's got the sidebar, the top bar, and the main view area.
 export class AppLayout extends LitElement {
   createRenderRoot() { return this; }
 
@@ -11,7 +13,8 @@ export class AppLayout extends LitElement {
     isMobileMenuOpen: { type: Boolean },
     currentPath: { type: String },
     user: { type: Object },
-    isUserPopoverOpen: { type: Boolean }
+    isUserPopoverOpen: { type: Boolean },
+    installable: { type: Boolean }
   };
 
   constructor() {
@@ -20,23 +23,45 @@ export class AppLayout extends LitElement {
     this.currentPath = window.location.pathname;
     this.user = AuthService.getUser();
     this.isUserPopoverOpen = false;
+    this.installable = false;
 
+    // We close the mobile menu whenever the route changes so it doesn't stay open.
     this._onRouteChanged = (e) => {
       this.currentPath = e.detail.path;
       this.isMobileMenuOpen = false;
+    };
+
+    // Toggle that little user profile popover.
+    this._onOpenUserPopover = (e) => {
+      this.isUserPopoverOpen = !this.isUserPopoverOpen;
+    };
+
+    // Keep an eye on if the app can be installed as a PWA.
+    this._pwaListener = (state) => {
+      this.installable = state.installable;
     };
   }
 
   connectedCallback() {
     super.connectedCallback();
     window.addEventListener('route-changed', this._onRouteChanged);
+    window.addEventListener('open-user-popover', this._onOpenUserPopover);
+    pwaService.addListener(this._pwaListener);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     window.removeEventListener('route-changed', this._onRouteChanged);
+    window.removeEventListener('open-user-popover', this._onOpenUserPopover);
+    pwaService.removeListener(this._pwaListener);
   }
 
+  // Trigger the PWA installation prompt.
+  handleInstall() {
+    pwaService.install();
+  }
+
+  // Helper to get initials from a name. If no name, just show question marks.
   _getInitials(name) {
     if (!name) return '??';
     const parts = name.split(' ');
@@ -46,6 +71,7 @@ export class AppLayout extends LitElement {
     return name.substring(0, 2).toUpperCase();
   }
 
+  // Generates a consistent color for the user avatar based on their name.
   _getUserColor(name) {
     if (!name) return '#256eff';
     
@@ -55,9 +81,6 @@ export class AppLayout extends LitElement {
     }
 
     // Use HSL for better control over accessibility
-    // Hue: 0-360 based on hash
-    // Saturation: 60-70% for vibrant but professional look
-    // Lightness: 30-45% to ensure white text always has > 4.5:1 contrast (WCAG AA)
     const h = Math.abs(hash % 360);
     const s = 65; 
     const l = 40; 
@@ -71,7 +94,7 @@ export class AppLayout extends LitElement {
 
     return html`
       <div class="flex h-screen bg-neutral-50 dark:bg-neutral-950 overflow-hidden font-sans antialiased text-neutral-900 dark:text-neutral-50 transition-colors duration-300">
-        <!-- Material 3 Corporate Sidebar -->
+        <!-- Sidebar for navigation links -->
         <side-nav 
           .currentPath=${this.currentPath}
           .mobileOpen=${this.isMobileMenuOpen}
@@ -79,16 +102,18 @@ export class AppLayout extends LitElement {
         </side-nav>
 
         <div class="flex flex-col flex-1 min-w-0 overflow-hidden relative">
-          <!-- Corporate App Bar -->
+          <!-- Top bar with logo and user menu -->
           <header class="h-14 bg-neutral-100 dark:bg-neutral-900 border-b border-neutral-200/15 dark:border-neutral-800/30 flex items-center justify-between px-6 shrink-0 z-10 sticky top-0 transition-colors duration-300">
             <div class="flex items-center gap-4">
-              <button 
-                @click=${() => this.isMobileMenuOpen = !this.isMobileMenuOpen}
-                class="p-1.5 -ml-2 text-neutral-500 dark:text-neutral-400 md:hidden hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-md-full transition-colors">
-                <span class="material-symbols-rounded text-[24px] leading-none">menu</span>
-              </button>
+              <!-- Mobile Logo - only shows on small screens -->
+              <div class="flex items-center gap-2 md:hidden">
+                <div class="w-8 h-8 rounded-md-md bg-primary-600 dark:bg-primary-500 flex items-center justify-center shadow-elevation-1">
+                  <span class="material-symbols-rounded text-white text-[18px]">eco</span>
+                </div>
+                <span class="font-bold text-neutral-900 dark:text-neutral-50 text-[16px] tracking-tight">PoultryDocs</span>
+              </div>
               
-              <div class="flex items-center gap-2 px-3 py-1 bg-success-100/50 dark:bg-success-900/20 rounded-md-full border border-success-200/20 dark:border-success-800/30">
+              <div class="hidden md:flex items-center gap-2 px-3 py-1 bg-success-100/50 dark:bg-success-900/20 rounded-md-full border border-success-200/20 dark:border-success-800/30">
                 <div class="w-1.5 h-1.5 rounded-full bg-success-500 animate-pulse"></div>
                 <p class="text-[11px] font-bold text-success-700 dark:text-success-300 uppercase tracking-wider">
                   System Live
@@ -105,6 +130,7 @@ export class AppLayout extends LitElement {
                 
                 <theme-toggle></theme-toggle>
 
+                <!-- User avatar button to open the popover -->
                 <button 
                   id="userAvatarBtn"
                   @click=${(e) => { e.stopPropagation(); this.isUserPopoverOpen = !this.isUserPopoverOpen; }}
@@ -113,6 +139,7 @@ export class AppLayout extends LitElement {
                   <span class="text-[12px] font-bold text-white tracking-tighter">${initials}</span>
                 </button>
 
+                <!-- The user menu itself -->
                 <ui-popover 
                   anchorId="userAvatarBtn" 
                   .open=${this.isUserPopoverOpen}
@@ -150,6 +177,19 @@ export class AppLayout extends LitElement {
                     </div>
 
                     <div class="flex flex-col gap-1 pt-2">
+                      ${this.installable ? html`
+                        <div class="px-3 py-2">
+                          <ui-button 
+                            variant="outlined"
+                            size="sm"
+                            icon="download_for_offline"
+                            label="Install App"
+                            @click=${this.handleInstall}
+                            fullWidth
+                          ></ui-button>
+                        </div>
+                      ` : ''}
+                      
                       <a href="/settings" data-link class="flex items-center gap-3 px-3 py-2 rounded-md-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors group">
                         <span class="material-symbols-rounded text-[20px] text-neutral-400 group-hover:text-primary-600">settings</span>
                         <span class="text-[14px] font-medium text-neutral-700 dark:text-neutral-300">Account Settings</span>
@@ -164,8 +204,8 @@ export class AppLayout extends LitElement {
             </div>
           </header>
 
-          <!-- Main View -->
-          <main class="flex-1 overflow-y-auto p-4 md:p-6 scroll-smooth">
+          <!-- Main View - where all the page content actually goes -->
+          <main class="flex-1 overflow-y-auto p-4 pb-20 md:pb-6 md:p-6 scroll-smooth">
             <div class="max-w-[1600px] mx-auto">
                 <router-view></router-view>
             </div>

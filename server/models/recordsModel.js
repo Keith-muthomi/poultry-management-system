@@ -1,7 +1,7 @@
 const db = require('../db/database');
 
 const RecordsModel = {
-  // Supplies
+  // All the stuff we've got in stock right now
   getAllSupplies: (farmId) => {
     return db.prepare('SELECT * FROM supplies WHERE farm_id = ? ORDER BY name ASC').all(farmId);
   },

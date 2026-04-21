@@ -1,9 +1,8 @@
 const API_BASE_URL = 'http://localhost:3000/api';
 
-/**
- * Base API Service for centralized fetch handling.
- */
+// Main helper to talk to our backend
 export const api = {
+  // Get the right headers, including the farm ID if we're logged in
   getHeaders() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const headers = { 'Content-Type': 'application/json' };
@@ -11,6 +10,7 @@ export const api = {
     return headers;
   },
 
+  // Basic GET request to fetch some data
   async get(endpoint) {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -27,6 +27,7 @@ export const api = {
     }
   },
 
+  // POST request to send new stuff to the server
   async post(endpoint, data) {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -45,6 +46,7 @@ export const api = {
     }
   },
 
+  // PUT request when we need to update something existing
   async put(endpoint, data) {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -63,6 +65,7 @@ export const api = {
     }
   },
 
+  // DELETE request to remove something
   async delete(endpoint) {
     try {
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {

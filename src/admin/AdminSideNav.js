@@ -1,6 +1,8 @@
 import { LitElement, html } from 'lit';
 import { AuthService } from '../services/AuthService.js';
 
+// The sidebar for the admin dashboard. 
+// It handles all the links and even lets you collapse the menu to save space.
 export class AdminSideNav extends LitElement {
   createRenderRoot() { return this; }
 
@@ -17,12 +19,14 @@ export class AdminSideNav extends LitElement {
     this.mobileOpen = false;
   }
 
+  // Helper to figure out if a link should look "active" based on where we are.
   isActive(path) {
     if (path === '/') return this.currentPath === '/';
     if (path === '/admin') return this.currentPath === '/admin';
     return this.currentPath.startsWith(path) && path !== '/';
   }
 
+  // Generates a single navigation link. We reuse this for all the items in the sidebar.
   navItem(path, label, icon) {
     const active = this.isActive(path);
     return html`
@@ -39,7 +43,7 @@ export class AdminSideNav extends LitElement {
 
   render() {
     return html`
-      <!-- Backdrop -->
+      <!-- Backdrop for mobile - clicks here close the menu -->
       <div 
         @click=${() => this.dispatchEvent(new CustomEvent('toggle-menu'))}
         class="fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 md:hidden ${this.mobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}">
@@ -50,7 +54,7 @@ export class AdminSideNav extends LitElement {
         md:translate-x-0 md:relative 
         ${this.collapsed ? 'md:w-20' : 'md:w-72'} w-72">
 
-        <!-- Logo -->
+        <!-- Logo / Brand section -->
         <div class="flex items-center gap-4 px-6 h-14 border-b border-neutral-200/5 dark:border-neutral-800/10 mb-4">
           <div class="w-10 h-10 rounded-md-md bg-primary-600 dark:bg-primary-500 flex items-center justify-center shadow-elevation-1">
             <span class="material-symbols-rounded text-white text-[24px]">shield</span>
@@ -60,7 +64,7 @@ export class AdminSideNav extends LitElement {
           </div>
         </div>
 
-        <!-- Navigation Items -->
+        <!-- Navigation Items - split into sections like Overview and System -->
         <nav class="flex flex-col flex-grow overflow-y-auto scrollbar-hide">
           <div class="text-[11px] font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest px-8 mb-3 mt-2 ${this.collapsed ? 'md:hidden' : ''}">Overview</div>
           ${this.navItem('/admin', 'Users Management', 'group')}
@@ -75,6 +79,7 @@ export class AdminSideNav extends LitElement {
 
           <div class="my-4 border-t border-neutral-200/5 dark:border-neutral-800/10 mx-6"></div>
 
+          <!-- Sign out button at the bottom -->
           <button
             @click=${() => AuthService.logout()}
             class="flex items-center gap-3 px-4 py-3 rounded-md-full text-[14px] transition-all duration-200 group mx-3 mb-1 text-error-600 hover:bg-error-600/5"
@@ -84,7 +89,7 @@ export class AdminSideNav extends LitElement {
           </button>
         </nav>
 
-        <!-- Footer / Collapse -->
+        <!-- Footer / Collapse toggle -->
         <div class="mt-auto p-3 border-t border-neutral-200/5 dark:border-neutral-800/10 hidden md:block">
            <button
             @click=${() => { this.collapsed = !this.collapsed; }}

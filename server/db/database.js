@@ -5,12 +5,12 @@ const fs = require('fs');
 const dbPath = path.resolve(__dirname, '../../poultry.db');
 const db = new Database(dbPath, { verbose: console.log });
 
-// Initialize database schema
+// Getting the database ready to use
 const schema = fs.readFileSync(path.resolve(__dirname, 'schema.sql'), 'utf8');
 
 try {
-    // We use .exec() to run the schema. 
-    // Because we updated schema.sql with "WHERE NOT EXISTS", it won't duplicate.
+    // Run all the SQL commands in our schema file
+    // We use "WHERE NOT EXISTS" so it doesn't try to add things that are already there
     db.exec(schema);
     console.log('[DB] Database schema initialized/checked.');
 } catch (error) {

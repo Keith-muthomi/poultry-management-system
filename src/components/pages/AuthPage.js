@@ -1,13 +1,15 @@
 import { html } from 'lit';
 import { BasePage } from '../base/BasePage.js';
 import { AuthService } from '../../services/AuthService.js';
+import { pwaService } from '../../services/PwaService.js';
 import '../ui/Button.js';
 import '../ui/Modal.js';
 
+// This is the login/register page. We also handle the extra admin security check here.
 export class AuthPage extends BasePage {
   static properties = {
     ...BasePage.properties,
-    mode: { type: String }, // 'login' or 'register'
+    mode: { type: String }, // Can be 'login' or 'register'
     errorMsg: { type: String },
     loading: { type: Boolean },
     showPassword: { type: Boolean },
@@ -15,7 +17,8 @@ export class AuthPage extends BasePage {
     isAdminModalOpen: { type: Boolean },
     adminUser: { type: Object },
     secondaryPassword: { type: String },
-    verifyingAdmin: { type: Boolean }
+    verifyingAdmin: { type: Boolean },
+    installable: { type: Boolean }
   };
 
   constructor() {
@@ -29,8 +32,36 @@ export class AuthPage extends BasePage {
     this.adminUser = null;
     this.secondaryPassword = '';
     this.verifyingAdmin = false;
+    this.installable = false;
+
+    // Just checking if we can show that "Install App" button.
+    this._pwaListener = (state) => {
+      this.installable = state.installable;
+    };
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    
+    // For local testing, we might want to force the install button to show up.
+    if (import.meta.env.DEV) {
+      pwaService.enableDebugMode();
+    }
+    
+    pwaService.addListener(this._pwaListener);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    pwaService.removeListener(this._pwaListener);
+  }
+
+  // Trigger the browser's install prompt.
+  handleInstall() {
+    pwaService.install();
+  }
+
+  // Switch between Login and Register views.
   toggleMode() {
     this.mode = this.mode === 'login' ? 'register' : 'login';
     this.errorMsg = '';
@@ -38,6 +69,7 @@ export class AuthPage extends BasePage {
     this.showPassword = false;
   }
 
+  // Keep track of what the user is typing.
   handleInput(e) {
     const { name, value } = e.target;
     if (name === 'secondaryPassword') {
@@ -48,6 +80,7 @@ export class AuthPage extends BasePage {
     if (this.errorMsg) this.errorMsg = '';
   }
 
+  // The main auth function. It handles both signing in and signing up.
   async handleAuth(e) {
     e.preventDefault();
     this.errorMsg = '';
@@ -55,6 +88,7 @@ export class AuthPage extends BasePage {
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
 
+    // Basic validation before we even talk to the server.
     if (!data.email || !data.password || (this.mode === 'register' && !data.name)) {
       this.errorMsg = 'Please fill in all required fields.';
       return;
@@ -64,6 +98,7 @@ export class AuthPage extends BasePage {
     try {
       if (this.mode === 'login') {
         const response = await AuthService.login(data);
+        // If they are an admin, we don't let them in yet - need that second password.
         if (response.user?.role === 'Admin') {
           this.adminUser = response.user;
           this.isAdminModalOpen = true;
@@ -72,6 +107,7 @@ export class AuthPage extends BasePage {
           window.location.href = '/'; 
         }
       } else {
+        // Just registering a new user.
         await AuthService.register(data);
         this.errorMsg = '';
         this.mode = 'login';
@@ -84,6 +120,7 @@ export class AuthPage extends BasePage {
     }
   }
 
+  // Verifies the secondary password for admin accounts.
   async handleAdminVerify(e) {
     if (e) e.preventDefault();
     this.verifyingAdmin = true;
@@ -109,6 +146,7 @@ export class AuthPage extends BasePage {
           
           <div class="absolute top-0 left-0 w-full h-1 bg-primary-600 dark:bg-primary-500"></div>
 
+          <!-- Logo and Header -->
           <div class="flex flex-col items-center mb-10">
             <div class="w-14 h-14 rounded-md-md bg-primary-600 dark:bg-primary-500 flex items-center justify-center mb-5 shadow-lg shadow-primary-500/20">
               <span class="material-symbols-rounded text-white text-[32px]">eco</span>
@@ -121,6 +159,7 @@ export class AuthPage extends BasePage {
             </p>
           </div>
 
+          <!-- Error message box -->
           ${this.errorMsg ? html`
             <div class="mb-8 p-4 bg-error-50 dark:bg-error-500/10 border border-error-200 dark:border-error-500/20 rounded-md-lg text-error-700 dark:text-error-400 text-[14px] font-medium flex items-start gap-3 animate-in slide-in-from-top-2 duration-300">
               <span class="material-symbols-rounded text-[20px] shrink-0 mt-0.5">error</span>
@@ -128,6 +167,7 @@ export class AuthPage extends BasePage {
             </div>
           ` : ''}
 
+          <!-- The main form -->
           <form class="flex flex-col gap-6" @submit=${this.handleAuth} novalidate>
 
             ${this.mode === 'register' ? html`
@@ -206,7 +246,8 @@ export class AuthPage extends BasePage {
 
           </form>
 
-          <div class="mt-10 pt-8 border-t border-neutral-100 dark:border-neutral-800/50 text-center">
+          <!-- Toggle between login and register -->
+          <div class="mt-10 pt-8 border-t border-neutral-100 dark:border-neutral-800/50 text-center flex flex-col gap-4">
             <p class="text-[14px] text-neutral-500 dark:text-neutral-400">
               ${this.mode === 'login' ? "New to PoultryDocs?" : 'Already have an account?'}
               <button
@@ -216,12 +257,23 @@ export class AuthPage extends BasePage {
                 ${this.mode === 'login' ? 'Create one for free' : 'Sign in here'}
               </button>
             </p>
+
+            ${this.installable ? html`
+              <ui-button 
+                variant="outlined"
+                size="sm"
+                icon="download_for_offline"
+                label="Install App"
+                @click=${this.handleInstall}
+                class="mx-auto block mt-4"
+              ></ui-button>
+            ` : ''}
           </div>
 
         </div>
       </div>
 
-      <!-- Admin Secondary Verification Modal -->
+      <!-- Admin Secondary Verification Modal - pops up if an admin logs in -->
       <ui-modal 
         .open=${this.isAdminModalOpen} 
         title="Elevated Access Required"

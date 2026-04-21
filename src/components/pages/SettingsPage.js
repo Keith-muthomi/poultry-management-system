@@ -3,6 +3,7 @@ import { BasePage } from '../base/BasePage.js';
 import { AuthService } from '../../services/AuthService.js';
 import { SettingsService } from '../../services/SettingsService.js';
 
+// This is where users can change their name, email, or password
 export class SettingsPage extends BasePage {
   static properties = {
     ...BasePage.properties,
@@ -22,6 +23,7 @@ export class SettingsPage extends BasePage {
     this.toast = { open: true, message, type };
   }
 
+  // Update the user's basic info like name and email
   async handleProfileUpdate(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -30,7 +32,7 @@ export class SettingsPage extends BasePage {
     this.saving = true;
     try {
       const response = await SettingsService.updateProfile(data);
-      this.user = AuthService.getUser();
+      this.user = AuthService.getUser(); // Refresh user data from local storage
       this.showToast('Profile updated successfully.', 'success');
     } catch (err) {
       this.showToast('Failed to update profile.', 'error');
@@ -39,6 +41,7 @@ export class SettingsPage extends BasePage {
     }
   }
 
+  // Change the user's password, making sure they typed it right twice
   async handlePasswordUpdate(e) {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -53,7 +56,7 @@ export class SettingsPage extends BasePage {
     try {
       await SettingsService.updatePassword(data);
       this.showToast('Password updated successfully.', 'success');
-      e.target.reset();
+      e.target.reset(); // Clear the form after success
     } catch (err) {
       this.showToast('Failed to update password.', 'error');
     } finally {

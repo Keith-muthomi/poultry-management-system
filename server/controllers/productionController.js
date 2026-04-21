@@ -1,6 +1,7 @@
 const ProductionModel = require('../models/productionModel');
 
 const ProductionController = {
+  // Get all the info about how many eggs we've been getting
   getAllProduction: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -11,6 +12,7 @@ const ProductionController = {
     }
   },
 
+  // How are we doing today? Let's check the numbers!
   getTodayStats: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -29,6 +31,7 @@ const ProductionController = {
     }
   },
 
+  // Look up a specific production record
   getProductionById: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -40,6 +43,7 @@ const ProductionController = {
     }
   },
 
+  // Write down the numbers for today
   createProduction: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     const userId = req.headers['x-user-id'];
@@ -51,6 +55,7 @@ const ProductionController = {
     }
   },
 
+  // Fix a typo in one of our records
   updateProduction: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
@@ -62,6 +67,7 @@ const ProductionController = {
     }
   },
 
+  // Toss out a record we don't need
   deleteProduction: (req, res) => {
     const farmId = req.headers['x-farm-id'];
     try {
