@@ -78,13 +78,13 @@ The application will be accessible at `http://localhost:5173`.
 
 For testing and academic evaluation, the following accounts are pre-configured in the system:
 
-| Role | Email | Password | Secondary Key | Status |
-| :--- | :--- | :--- | :--- | :--- |
-| **System Admin** | `admin@poultrydocs.com` | `admin123` | `secure456` | Active |
-| **Manager** | `john@poultrydocs.com` | `password123` | N/A | Active |
-| **Records** | `sarah@poultrydocs.com` | `password123` | N/A | Active |
-| **Finance** | `michael@poultrydocs.com` | `password123` | N/A | Active |
-| **User (Suspended)** | `david@poultrydocs.com` | `password123` | N/A | Suspended |
+| Name | Email | Password | Role | Secondary Key | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **System Admin** | `admin@poultrydocs.com` | `admin123` | Admin | `secure456` | Active |
+| **Kamau Waithaka** | `kamau@poultrydocs.com` | `password123` | User | N/A | Active |
+| **Achieng Awuor** | `achieng@poultrydocs.com` | `password123` | User | N/A | Active |
+| **Kibet Chepkwony** | `kibet@poultrydocs.com` | `password123` | User | N/A | Active |
+| **Kwamboka Moraa** | `kwamboka@poultrydocs.com` | `password123` | User | N/A | Suspended |
 
 ---
 

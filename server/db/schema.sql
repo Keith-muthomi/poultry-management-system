@@ -109,17 +109,17 @@ SELECT 'System Admin', 'admin@poultrydocs.com', 'admin123', 'Admin', 'Active'
 WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'admin@poultrydocs.com');
 
 INSERT INTO users (name, email, password, role, status)
-SELECT 'John Farm Manager', 'john@poultrydocs.com', 'password123', 'User', 'Active'
-WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'john@poultrydocs.com');
+SELECT 'Kamau Waithaka', 'kamau@poultrydocs.com', 'password123', 'User', 'Active'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'kamau@poultrydocs.com');
 
 INSERT INTO users (name, email, password, role, status)
-SELECT 'Sarah Records', 'sarah@poultrydocs.com', 'password123', 'User', 'Active'
-WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'sarah@poultrydocs.com');
+SELECT 'Achieng Awuor', 'achieng@poultrydocs.com', 'password123', 'User', 'Active'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'achieng@poultrydocs.com');
 
 INSERT INTO users (name, email, password, role, status)
-SELECT 'Michael Finance', 'michael@poultrydocs.com', 'password123', 'User', 'Active'
-WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'michael@poultrydocs.com');
+SELECT 'Kibet Chepkwony', 'kibet@poultrydocs.com', 'password123', 'User', 'Active'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'kibet@poultrydocs.com');
 
 INSERT INTO users (name, email, password, role, status)
-SELECT 'David Suspended', 'david@poultrydocs.com', 'password123', 'User', 'Suspended'
-WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'david@poultrydocs.com');
+SELECT 'Kwamboka Moraa', 'kwamboka@poultrydocs.com', 'password123', 'User', 'Suspended'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'kwamboka@poultrydocs.com');
