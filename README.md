@@ -45,10 +45,25 @@ The application is built on a modern **Single Page Application (SPA)** architect
 | **Server** | Node.js, Express |
 | **Database** | SQLite3 |
 | **Icons & Visuals** | Material Symbols (Google) |
+| **Security** | Helmet.js, Bcryptjs, Dotenv |
 
 ---
 
-## 5. Getting Started
+## 5. Cybersecurity
+The system implements industry-standard security practices to ensure data integrity and protection against common web vulnerabilities.
+
+- **Password Hashing (Bcryptjs)**: All user passwords and administrative secondary keys are hashed using **Bcrypt** with a salt factor of 10. This ensures that even in the event of a database compromise, raw passwords remain unreadable.
+- **Helmet.js Integration**: The backend utilizes [Helmet.js](https://helmetjs.github.io/) to set secure HTTP headers automatically. This provides protection against:
+    - **Cross-Site Scripting (XSS)**: Prevents malicious scripts from being injected into the application.
+    - **Clickjacking**: Ensures the application cannot be embedded in unauthorized iframes (via `X-Frame-Options`).
+    - **MIME Sniffing**: Prevents browsers from interpreting files as a different MIME type (via `X-Content-Type-Options`).
+    - **Content Security Policy (CSP)**: Restricts the sources from which scripts, styles, and fonts can be loaded, mitigating data injection attacks.
+- **Environment Configuration**: Sensitive settings (like database paths and salt rounds) are managed via a `.env` file, keeping configuration separate from code.
+- **Role-Based Access Control (RBAC)**: Strict separation between administrative and standard user capabilities.
+
+---
+
+## 6. Getting Started
 
 ### Prerequisites
 - **Node.js** (v18.x or higher)
@@ -64,17 +79,26 @@ The application is built on a modern **Single Page Application (SPA)** architect
    ```bash
    npm install
    ```
+3. Configure the environment:
+   A `.env` file is required in the root directory. You can use the following default values:
+   ```env
+   PORT=3000
+   DB_PATH=poultry.db
+   BCRYPT_SALT_ROUNDS=10
+   ```
 
 ### Execution
-To launch the development environment (including the API server, frontend watcher, and Tailwind compiler):
+To launch the development environment (including the API server and frontend):
 ```bash
 npm run dev
 ```
 The application will be accessible at `http://localhost:5173`.
 
+> **Note on PWA Assets**: The Progressive Web App (PWA) features are currently in a test phase. Placeholder icons are required in the `/public` or `/src/assets` folder for the full offline experience to function without 404 errors.
+
 ---
 
-## 6. Default Login Credentials
+## 7. Default Login Credentials
 
 For testing and academic evaluation, the following accounts are pre-configured in the system:
 
@@ -88,7 +112,7 @@ For testing and academic evaluation, the following accounts are pre-configured i
 
 ---
 
-## 7. Project Scripts
+## 8. Project Scripts
 - `npm run dev`: Starts the integrated development environment.
 - `npm run build`: Compiles and optimizes assets for production deployment.
 - `npm start`: Runs the production-ready server.

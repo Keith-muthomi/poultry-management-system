@@ -1,5 +1,5 @@
 import { LitElement, html, unsafeCSS } from 'lit';
-import globalStyles from '../../styles/output.css?inline';
+import globalStyles from '../../styles/input.css?inline';
 
 export class UIModal extends LitElement {
   static styles = unsafeCSS(globalStyles);

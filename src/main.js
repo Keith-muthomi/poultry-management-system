@@ -1,3 +1,5 @@
+import './styles/input.css';
+
 // Load up all our custom tags so they're ready when we need to show them
 import './components/layout/AppLayout.js';
 import './components/pages/HomePage.js';
