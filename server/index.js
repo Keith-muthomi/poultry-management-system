@@ -18,7 +18,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const distPath = path.join(__dirname, '../dist');
 
-// 1. HELMET FIRST
+// 1. STATIC FILES FIRST (To avoid CORS/Auth checks on assets)
+app.use(express.static(distPath));
+
+// 2. HELMET
 const isProduction = process.env.NODE_ENV === 'production';
 
 app.use(helmet({
@@ -34,22 +37,25 @@ app.use(helmet({
   },
 }));
 
-// 2. STATIC FILES (Move this ABOVE the routes)
-// This ensures that when the browser asks for /assets/..., it finds them.
-app.use(express.static(distPath));
-
-// 3. MIDDLEWARE & API ROUTES
+// 3. CORS CONFIGURATION
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
   ? process.env.ALLOWED_ORIGINS.split(',') 
-  : ['http://localhost:5173', 'http://localhost:3000'];
+  : [
+      'http://localhost:5173', 
+      'http://localhost:3000',
+      'https://poultry-management-system-9b6t.onrender.com'
+    ];
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // Allow same-origin requests (no origin header)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1 || !isProduction) {
+    
+    if (allowedOrigins.includes(origin) || !isProduction) {
       callback(null, true);
     } else {
+      // Log exactly what was rejected to help debugging
+      console.log('CORS rejected origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
