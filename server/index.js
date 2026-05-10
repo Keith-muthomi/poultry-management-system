@@ -11,33 +11,69 @@ const financeRoutes = require('./routes/finance');
 const recordsRoutes = require('./routes/records');
 const protocolRoutes = require('./routes/protocols');
 const adminRoutes = require('./routes/admin');
+const authMiddleware = require('./middleware/auth');
 
 const app = express();
 // Priority: 1. Environment variable, 2. Default to 3000
 const PORT = process.env.PORT || 3000;
 const distPath = path.join(__dirname, '../dist');
 
-// Setting up the tools we need
+// 1. HELMET FIRST
+const isProduction = process.env.NODE_ENV === 'production';
+
 app.use(helmet({
-  contentSecurityPolicy: {
+  contentSecurityPolicy: isProduction ? {
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // For dev flexibility
+      "script-src": ["'self'"],
+      "img-src": ["'self'", "data:", "blob:"],
+      "font-src": ["'self'", "https://fonts.gstatic.com"],
+      "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+    },
+  } : {
+    directives: {
+      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+      "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
       "img-src": ["'self'", "data:", "blob:"],
       "font-src": ["'self'", "https://fonts.gstatic.com"],
       "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
     },
   },
 }));
-app.use(cors());
-app.use(express.json()); // We need this so the server can read the data we send it
-// Show the files we built with Vite
+
+// 2. STATIC FILES (Move this ABOVE the routes)
+// This ensures that when the browser asks for /assets/..., it finds them.
 app.use(express.static(distPath));
+
+// 3. MIDDLEWARE & API ROUTES
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',') 
+  : ['http://localhost:5173', 'http://localhost:3000'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1 || !isProduction) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
+app.use(express.json()); // We need this so the server can read the data we send it
+
+// Auth routes must NOT be behind the authMiddleware
+app.use('/api/auth', authRoutes);
+
+// Protection for everything else
+app.use('/api', authMiddleware);
 
 // Here are all our api paths
 app.use('/api/flocks', flockRoutes);
 app.use('/api/production', productionRoutes);
-app.use('/api/auth', authRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/records', recordsRoutes);
 app.use('/api/protocols', protocolRoutes);
@@ -48,9 +84,9 @@ app.get('/api/health', (req, res) => {
   res.json({ status: "ok", message: "Server is running with modular routes!" });
 });
 
-// Send everything else to the index.html so the client-side router can handle it
-// This is the "catch-all" route for Single Page Applications
-app.get('*', (req, res) => {
+// 4. THE CATCH-ALL (MUST BE THE VERY LAST ROUTE)
+// Using app.use for the catch-all to avoid Express 5 string path parsing issues
+app.use((req, res) => {
   res.sendFile(path.join(distPath, 'index.html'));
 });
 
