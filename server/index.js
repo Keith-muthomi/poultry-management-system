@@ -22,21 +22,14 @@ const distPath = path.join(__dirname, '../dist');
 const isProduction = process.env.NODE_ENV === 'production';
 
 app.use(helmet({
-  contentSecurityPolicy: isProduction ? {
+  contentSecurityPolicy: {
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      "script-src": ["'self'"],
+      "connect-src": ["'self'", "https://poultry-management-system-9b6t.onrender.com"],
+      "script-src": ["'self'", "'unsafe-inline'"], // Allows your Vite chunks to run
+      "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       "img-src": ["'self'", "data:", "blob:"],
       "font-src": ["'self'", "https://fonts.gstatic.com"],
-      "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-    },
-  } : {
-    directives: {
-      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      "img-src": ["'self'", "data:", "blob:"],
-      "font-src": ["'self'", "https://fonts.gstatic.com"],
-      "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
     },
   },
 }));
